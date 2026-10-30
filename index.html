@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>PromptForge · 个人提示词库</title>
+<link rel="icon" href="data/images/logo.svg">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<header class="site-header">
+  <div class="wrap header-inner">
+    <a class="brand" href="#">
+      <img class="brand-mark" src="data/images/logo.svg" alt="PromptForge">
+      <span class="brand-name">PromptForge<em>个人提示词库</em></span>
+    </a>
+    <nav class="top-nav">
+      <a href="#gallery">图库</a>
+      <a href="#about">关于</a>
+      <a href="admin.html" class="nav-admin">管理员登录</a>
+    </nav>
+  </div>
+</header>
+
+<section class="hero">
+  <div class="hero-logo" aria-hidden="true">
+    <img src="data/images/logo.svg" alt="">
+  </div>
+  <h1 class="hero-title">AI 图像生成提示词<br><span class="hero-title-accent">灵感库</span></h1>
+  <p class="hero-slogan">已收录 <span id="hero-count">…</span> 条 · 覆盖 <span id="hero-cats"></span></p>
+  <div class="hero-actions">
+    <button id="hero-random" type="button" class="btn-hero">随机逛一条</button>
+    <button id="hero-latest" type="button" class="btn-hero btn-hero-dark">最近更新</button>
+    <button id="hero-copy" type="button" class="btn-hero btn-hero-primary">复制随机提示词</button>
+  </div>
+</section>
+
+<!-- 书10C 控制条：搜索框 + 分类胶囊 + 计数排序 三条一体整体吸顶（页头正下方）。
+     搜索框从 .hero 搬出（藏在 Hero 内正是它跟着滚走的原因）；容器 class 由 hero-search
+     改 control-search——「控制条内不含任何 .hero-* 元素」是判卷断言③。
+     书10E：控制条移出 main#gallery 成为其前置兄弟——原在 main 内，sticky 受容器末端约束，
+     滚到图库底部会被推离吸顶位、下面露出一段卡片（用户反馈「固定模块应钉到滚动终点」）。
+     移出后 sticky 范围 = body，吸顶直到文档终点，不再有「被推走」状态。 -->
+<div class="control-bar" id="control-bar">
+  <div class="control-search">
+    <input id="search-input" type="search" placeholder="搜索提示词或作者..." autocomplete="off">
+  </div>
+  <nav id="category-nav" class="category-nav" aria-label="分类导航"></nav>
+  <div class="grid-head">
+    <span id="result-count" class="result-count"></span>
+    <div class="grid-head-right">
+      <div id="view-toggle" class="view-toggle" role="group" aria-label="视图切换">
+        <button id="view-waterfall" type="button" class="view-btn is-active" data-view="waterfall" aria-pressed="true">瀑布流</button>
+        <button id="view-grid" type="button" class="view-btn" data-view="grid" aria-pressed="false">网格</button>
+      </div>
+      <select id="grid-sort" class="sort-btn" aria-label="排序方式">
+        <option value="recent">最新发布</option>
+        <option value="oldest">最早发布</option>
+        <option value="category" selected>按类别</option>
+        <option value="title">按标题</option>
+      </select>
+    </div>
+  </div>
+</div>
+
+<main class="gallery-wrap" id="gallery">
+  <section id="card-grid" class="card-grid"></section>
+</main>
+
+<!-- 点卡弹窗：1080×864 居中，左 60% 图 / 右 40% 信息（对齐 aiart.pics） -->
+<div id="detail" class="detail" aria-hidden="true" role="dialog" aria-modal="true">
+  <div class="detail-mask" data-close="1"></div>
+  <div class="detail-panel" role="document">
+    <div class="detail-handle" aria-hidden="true"></div>
+    <button id="detail-close" type="button" class="btn-close" aria-label="关闭">×</button>
+
+    <!-- 左 60%：效果图（多图切换移入此处） -->
+    <div class="detail-media">
+      <img id="detail-image" src="" alt="">
+      <button id="detail-prev" type="button" class="nav-arrow prev" aria-label="上一张">‹</button>
+      <button id="detail-next" type="button" class="nav-arrow next" aria-label="下一张">›</button>
+      <span id="detail-img-count" class="img-count"></span>
+    </div>
+
+    <!-- 右 40%：信息 + 提示词 + 一键复制（排版对齐参考站：徽章→标题→作者/分类→标签→提示词卡→CTA 条） -->
+    <div class="detail-body">
+      <div class="detail-body-head">
+        <span id="detail-model" class="detail-model-badge"></span>
+      </div>
+      <h2 id="detail-title" class="detail-title"></h2>
+      <div class="detail-author-line">
+        <span id="detail-category" class="detail-category"></span>
+        <span>贡献人 <b id="detail-author" class="detail-author"></b></span>
+      </div>
+      <div class="block">
+        <div id="detail-tags" class="tag-row"></div>
+      </div>
+      <div class="prompt-card">
+        <div class="block-head">
+          <h3 class="block-label">提示词</h3>
+          <button id="detail-copy-sm" type="button" class="btn-copy-sm">复制</button>
+        </div>
+        <pre id="detail-prompt" class="prompt-block"></pre>
+      </div>
+      <div class="prompt-card is-hidden" id="detail-negative-block">
+        <div class="block-head">
+          <h3 class="block-label">负向提示词</h3>
+        </div>
+        <pre id="detail-negative" class="prompt-block is-negative"></pre>
+      </div>
+      <dl class="meta-grid meta-grid-sub">
+        <dt>来源</dt><dd id="detail-source"></dd>
+        <dt>创建</dt><dd id="detail-date"></dd>
+        <dt>更新</dt><dd id="detail-updated"></dd>
+      </dl>
+      <div class="detail-cta">
+        <button id="detail-copy" type="button" class="btn-copy-main">复制提示词</button>
+      </div>
+      <span id="copy-feedback" class="copy-feedback" aria-live="polite"></span>
+    </div>
+  </div>
+</div>
+
+<section id="about" class="about" aria-label="关于">
+  <div class="about-inner">
+    <p class="about-kicker">ABOUT</p>
+    <h2 class="about-title">关于个人提示词库</h2>
+    <p class="about-lead">
+      把日常打磨出的<strong>好提示词</strong>沉淀成个人库——可搜、可复现、可分享，欢迎取用。
+    </p>
+
+    <div class="about-grid">
+      <article class="about-card">
+        <h3>灵感收集</h3>
+        <p>打动人的 AI 作品连同提示词、模型与效果图一并收进来，条条可溯源、可复现。</p>
+      </article>
+      <article class="about-card">
+        <h3>模板化</h3>
+        <p>零散好句整理成结构化模板，下次出同类图，站在已验证的起点上。</p>
+      </article>
+      <article class="about-card">
+        <h3>流程化</h3>
+        <p>模板沉淀为流程，按分类检索、按模板改写，稳定输出一致调性的画面。</p>
+      </article>
+    </div>
+
+    <p class="about-asset">
+      这是我的 AIGC <strong>个人提示词收藏</strong>——收集、验证、持续迭代，全部免费开放（CC BY 4.0 条目请注明作者）。
+    </p>
+
+    <div class="about-credit">
+      <p class="about-credit-org">设计 · 开发 · 维护：马守坤</p>
+      <p class="about-credit-note">
+        好提示词值得被复用——把踩过的坑和验证过的写法开放出来，让更多人少走弯路。
+      </p>
+    </div>
+  </div>
+</section>
+
+<footer class="site-footer">
+  <div class="wrap">
+    <p class="footer-main">PromptForge · 个人提示词库 · 游客只读</p>
+    <p class="footer-note">设计维护：马守坤</p>
+  </div>
+</footer>
+
+<!-- 悬浮回顶：滚过约一屏后右下角浮现，点击平滑回顶 -->
+<button id="back-to-top" type="button" class="back-to-top" aria-label="回到顶部">
+  <svg width="18" height="18" viewBox="0 0 18 18" fill="none" aria-hidden="true">
+    <path d="M9 14V4M4 8.5 9 3.5l5 5" stroke="currentColor" stroke-width="1.8"
+      stroke-linecap="round" stroke-linejoin="round"/>
+  </svg>
+</button>
+
+<script src="app.js"></script>
+</body>
+</html>

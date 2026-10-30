@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>管理面板 · PromptForge 个人提示词库</title>
+<link rel="icon" href="data/images/logo.svg">
+<link rel="stylesheet" href="styles.css">
+<link rel="stylesheet" href="admin.css">
+</head>
+<body class="admin-body">
+
+<!-- 登录 -->
+<section id="admin-login" class="admin-login">
+  <div class="admin-login-card">
+    <img class="admin-login-logo" src="data/images/logo.svg" alt="PromptForge">
+    <h1 class="admin-login-title">管理面板</h1>
+    <p class="admin-login-sub">PromptForge · 条目与图片管理（个人版）</p>
+    <!-- 唯一凭证：GitHub 令牌（真正的权限边界）
+         书14 决策（领导 2026-10-15）：删掉「访问口令」这道门。
+         理由：① 它从来不是安全边界——PBKDF2 哈希以常量形式嵌在公开的 admin.html 里，
+              看源码即可离线爆破；② 更实际的问题是它**会被部署覆盖**：口令哈希存放在
+              site/admin.html 的 <script> 里，而 deploy.sh 只推本地 site/，每次上线都会用
+              本地的旧哈希盖掉线上改过的值（领导多次遇到「上线后口令被还原」）。
+         现在管理员凭证唯一 = GitHub 令牌：线上必须真令牌（GitHub API 会验），
+         本地随便写都能过（本地 fs 后端不碰 GitHub，令牌无安全含义）。 -->
+    <div id="gh-row" class="is-hidden">
+      <label class="field">
+        <span class="field-label">GitHub 令牌</span>
+        <input id="gh-token" type="password" placeholder="fine-grained PAT · 仅 Contents R/W" autocomplete="off">
+      </label>
+      <button id="gh-login-btn" type="button" class="btn-primary-block">进入管理</button>
+    </div>
+    <!-- 本地模式：同一条路径。令牌在本地不做验证（不碰 GitHub），随便写都能过；
+         仍需向 server 换一枚会话 token 才能调 /api/*，该交换由 ADMIN_OPEN 开关放行。 -->
+    <div id="local-row">
+      <label class="field">
+        <span class="field-label">管理员令牌</span>
+        <input id="admin-pw" type="password" placeholder="本地模式：随便填即可进入" autocomplete="off">
+      </label>
+      <button id="admin-login-btn" type="button" class="btn-primary-block">登录</button>
+    </div>
+    <p id="gate-hint" class="field-hint">访问口令这道门已下线（它会被每次上线覆盖，且从来不是安全边界）。现在凭证唯一：<strong>GitHub 令牌</strong>——线上会真实校验，本地不碰GitHub、随便填即可进。<a href="pat-help.html#%E4%BB%A4%E7%89%8C%E6%80%8E%E4%B9%88%E6%8B%BF" target="_blank" rel="noopener">令牌怎么拿</a></p>
+    <p id="admin-login-msg" class="admin-msg"></p>
+    <a class="admin-back" href="index.html">← 返回游客页</a>
+  </div>
+</section>
+
+<!-- 面板主体 -->
+<section id="admin-app" class="admin-app is-hidden">
+  <header class="admin-top">
+    <div class="admin-top-inner">
+      <div class="admin-top-brand">
+        <img src="data/images/logo.svg" alt="">
+        <span>PromptForge<em>管理面板 · 个人版</em></span>
+      </div>
+      <div class="admin-top-actions">
+        <span id="admin-status" class="admin-status"></span>
+        <a class="btn-ghost" href="index.html" target="_blank" rel="noopener" title="在新标签打开游客页">返回游客页</a>
+        <button id="pw-open" type="button" class="btn-ghost">修改口令</button>
+        <button id="admin-logout" type="button" class="btn-ghost">退出</button>
+      </div>
+    </div>
+  </header>
+
+  <div class="admin-layout">
+    <!-- 左：条目列表 -->
+    <aside class="admin-side">
+      <div class="admin-side-head">
+        <button id="admin-new" type="button" class="btn-primary-block">＋ 新增条目</button>
+        <input id="admin-search" type="search" placeholder="搜索标题或提示词…">
+        <div id="admin-cats" class="admin-cats"></div>
+        <!-- 批量删除：勾选工具条。未选中时不占空间（is-visible 才显示） -->
+        <div id="admin-pick-bar" class="admin-pick-bar">
+          <button id="admin-pick-all" type="button" class="pick-btn">全选</button>
+          <button id="admin-pick-invert" type="button" class="pick-btn">反选</button>
+          <button id="admin-pick-none" type="button" class="pick-btn">清空</button>
+          <span id="admin-pick-count" class="pick-count">已选 0 条</span>
+          <button id="admin-bulk-del" type="button" class="pick-del" disabled>批量删除</button>
+        </div>
+      </div>
+      <ul id="admin-entry-list" class="admin-entry-list"></ul>
+      <!-- 书4：分类管理（增 / 删 / 改名级联）。放在侧栏底部，不挤表单的一屏空间 -->
+      <div id="cat-manager" class="cat-manager">
+        <div class="cat-manager-head">
+          <span>分类管理</span>
+          <span id="cat-count" class="cat-count">共 0 类</span>
+        </div>
+        <p class="cat-tip">改动即刻提交到仓库；线上 Pages 重建约 1 分钟、浏览器缓存最多 10 分钟，之后刷新游客页可见。</p>
+        <div class="cat-add-row">
+          <input id="cat-new" type="text" placeholder="新分类名称（回车＝确定）" autocomplete="off">
+          <button id="cat-add" type="button" class="btn-mini">确定</button>
+        </div>
+        <div id="cat-rows" class="cat-rows"></div>
+        <p id="cat-msg" class="admin-msg"></p>
+      </div>
+    </aside>
+
+    <!-- 右：编辑表单 -->
+    <main class="admin-main">
+      <!-- 书17 · 采集包导入：把源站采集的 JSON 灌进暂存箱（只入箱，绝不自动发布） -->
+      <section id="import-box" class="import-box">
+        <div class="import-head">
+          <span class="import-title">采集包导入</span>
+          <button id="import-btn" type="button" class="btn-mini">导入采集包</button>
+          <input id="import-file" type="file" accept="application/json,.json" multiple hidden>
+        </div>
+        <p id="import-msg" class="import-msg"></p>
+      </section>
+
+      <!-- 书15 · 暂存箱：新增条目先入箱（IndexedDB 持久化），攒批整批原子发布 -->
+      <section id="staging-box" class="staging is-hidden">
+        <div class="staging-head">
+          <h2 class="staging-title">暂存箱 <span id="staging-count" class="staging-count">0</span></h2>
+          <div class="staging-actions">
+            <button id="staging-pick-all" type="button" class="btn-mini">全选</button>
+            <button id="staging-remove-checked" type="button" class="btn-mini is-danger">移除勾选</button>
+            <button id="staging-publish" type="button" class="btn-primary-block" disabled>发布勾选（0 条）</button>
+          </div>
+        </div>
+        <p id="staging-banner" class="staging-banner is-hidden"></p>
+        <div id="staging-rows" class="staging-rows"></div>
+      </section>
+
+      <form id="admin-form" class="admin-form is-hidden" autocomplete="off">
+        <h2 id="admin-form-title" class="admin-form-title">新增条目</h2>
+
+        <div class="grid-2">
+          <label class="field"><span class="field-label">标题 *</span>
+            <input id="f-title" type="text" required></label>
+          <div class="field"><span class="field-label">分类 *（可多选）</span>
+            <div class="ms-wrap">
+              <div id="f-category" class="ms" tabindex="0" role="group" aria-label="分类（可多选）">
+                <span class="ms-placeholder">请选择分类</span>
+                <span class="ms-toggle" aria-hidden="true">▾</span>
+              </div>
+              <div id="f-category-panel" class="ms-panel is-hidden" role="listbox" aria-multiselectable="true"></div>
+              <select id="f-category-store" multiple class="ms-store" tabindex="-1" aria-hidden="true"></select>
+            </div>
+            <p class="field-hint">点击选择，可多选；至少选 1 类；与真实类并存时「其他」保存前自动剔除。</p>
+          </div>
+        </div>
+
+        <label class="field"><span class="field-label">正向提示词 *</span>
+          <textarea id="f-prompt" rows="6" required></textarea></label>
+
+        <label class="field"><span class="field-label">负向提示词（可空）</span>
+          <textarea id="f-negative" rows="3"></textarea></label>
+
+        <div class="grid-2">
+          <label class="field"><span class="field-label">适用模型</span>
+            <input id="f-model" type="text" list="f-model-list" autocomplete="off">
+            <datalist id="f-model-list"></datalist></label>
+          <label class="field"><span class="field-label">贡献人</span>
+            <input id="f-author" type="text"></label>
+        </div>
+
+        <label class="field"><span class="field-label">来源</span>
+          <input id="f-source" type="text"></label>
+
+        <label class="field"><span class="field-label">标签（逗号分隔）</span>
+          <input id="f-tags" type="text" placeholder="冷白, 瑞士风"></label>
+
+        <!-- 图片 -->
+        <div class="field">
+          <span class="field-label">效果图（1~3 张，首张为封面）</span>
+          <div id="admin-img-list" class="admin-img-list"></div>
+          <input id="admin-file" type="file" accept="image/*" multiple>
+          <p class="field-hint">上传自动压缩：长边 ≤1600px、体积 ≤300KB；压不进自动降质量重压。</p>
+          <p id="admin-img-msg" class="admin-msg"></p>
+        </div>
+
+        <div class="admin-form-actions">
+          <button id="admin-save" type="submit" class="btn-primary-block">保存</button>
+          <button id="admin-cancel" type="button" class="btn-ghost">取消</button>
+          <button id="admin-delete" type="button" class="btn-danger is-hidden">删除此条</button>
+        </div>
+      </form>
+      <div id="admin-empty" class="admin-empty">选择左侧条目进行编辑，或点「新增条目」。</div>
+    </main>
+  </div>
+</section>
+
+<!-- 修改口令弹窗（账号级操作：顶栏入口进入，不占编辑列空间） -->
+<div id="pw-modal" class="pw-modal is-hidden" role="dialog" aria-modal="true" aria-hidden="true">
+  <div class="pw-mask" data-close="1"></div>
+  <form id="pw-form" class="pw-card" autocomplete="off">
+    <h2 class="pw-title">修改口令</h2>
+    <label class="field"><span class="field-label">当前口令 *</span>
+      <input id="pw-current" type="password" autocomplete="current-password" required></label>
+    <label class="field"><span class="field-label">新口令（至少 8 位）*</span>
+      <input id="pw-new" type="password" autocomplete="new-password" required></label>
+    <label class="field"><span class="field-label">确认新口令 *</span>
+      <input id="pw-new2" type="password" autocomplete="new-password" required></label>
+    <p id="pw-msg" class="admin-msg" aria-live="polite"></p>
+    <div class="pw-actions">
+      <button id="pw-save" type="submit" class="btn-primary-block">保存新口令</button>
+      <button id="pw-cancel" type="button" class="btn-ghost">取消</button>
+    </div>
+    <p class="field-hint">需先验证当前口令；保存后所有已登录会话立即失效，请用新口令重新登录。
+      口令仅存 scrypt 哈希（server/.pw-hash），明文不落盘；若服务以 ADMIN_PW 环境变量启动，重启后以环境变量为准。</p>
+  </form>
+</div>
+
+<!-- 书14：访问口令门已下线，原 window.TM_GATE 常量一并移除。
+     它的存在本身就是「会被部署覆盖」的根源——哈希是明文常量、随 site/ 一起被推上线。
+     管理员凭证唯一 = GitHub 令牌（线上真校验 / 本地不校验）。 -->
+<script src="admin.js"></script>
+</body>
+</html>

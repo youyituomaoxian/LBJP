@@ -1,0 +1,674 @@
+/* 视觉对齐参考站 aiart.pics（Playwright 黑盒实测 computed style，真值见 PROGRESS.md 书4·任务V）
+ * 采用参考站的**版式 / 字阶 / 几何 / 交互**；**底色改冷白**（用户拍板：不跟参考站暖米，
+ * 改与品牌色 #005EAE 同一冷调）。换色规则：参考站三处强调色（珊瑚主 CTA/计数、
+ * 蓝复制钮/模型徽章、靛作者片）统一收口到品牌色 #005EAE 系，不引入站外色相。
+ * 标签样式沿用本站既有风格。
+ *
+ * 交互动效参数对齐参考站：
+ *   卡片 transition-all duration-300 (0.3s) cubic-bezier(0.4,0,0.2,1)
+ *   卡片 rounded-xl = 12px，hover:-translate-y-1(-4px)，shadow-sm → hover:shadow-xl
+ *   图片 transition-transform duration-500(0.5s) group-hover:scale-110
+ *   压字层 opacity-0 → group-hover:opacity-100（默认全隐藏，关键交互）
+ *   入场 animate-fade-in 0.6s ease-out backwards */
+:root{
+  --brand:#005EAE;
+  --brand-soft:#EAF3FB;
+  --brand-2:#00A3E0;              /* 标题渐变第二段（品牌色系，非站外色相） */
+  --ink:#1B1F24;                  /* 正文 冷黑 */
+  --ink-strong:#0f172b;           /* 大标题 / 激活胶囊底 */
+  --ink-2:#5A646E;                /* 副标 */
+  --ink-3:#8A94A6;                /* 弱文字 */
+  --ink-4:#45556c;                /* 未激活胶囊字 */
+  --line:#E3E8EE;                 /* 冷灰边框 */
+  --bg:#FFFFFF;                   /* 卡底 纯白 */
+  --bg-page:#F7F9FC;              /* 页底 冷白 */
+  --bg-hold:#EDF1F6;              /* 卡占位骨架（冷调） */
+  --bg-muted:#E9EEF4;             /* 弹窗图区底（冷调） */
+  --bg-tag:#F1F5F9;               /* 标签底 */
+  --radius:12px;                  /* rounded-xl */
+  --ease:cubic-bezier(0.4, 0, 0.2, 1);   /* 参考站统一缓动 */
+  --dur:300ms;                    /* duration-300 */
+  --dur-img:500ms;                /* duration-500 图片缩放 */
+  --shadow-sm:0 1px 3px 0 rgba(0,0,0,.10), 0 1px 2px -1px rgba(0,0,0,.10);
+  --shadow-xl:0 4px 4px 0 rgba(0,0,0,.10), 0 8px 10px -1px rgba(0,0,0,.10);
+  --shadow-hover-ring:0 0 0 4px rgba(0,94,174,.5);
+}
+@keyframes fade-in{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+@keyframes overlay-in{from{opacity:0}to{opacity:1}}
+@keyframes panel-in{from{transform:scale(.97) translateY(10px);opacity:.5}to{transform:scale(1) translateY(0);opacity:1}}
+@media (prefers-reduced-motion: reduce){
+  *,*::before,*::after{animation-duration:.01ms !important;animation-iteration-count:1 !important;
+    transition-duration:.01ms !important;scroll-behavior:auto !important}
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{
+  background:var(--bg-page);
+  color:var(--ink);
+  font:16px/24px ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,
+    "Helvetica Neue",Arial,"Noto Sans","PingFang SC","Microsoft YaHei",sans-serif;
+  -webkit-font-smoothing:antialiased;
+}
+.wrap{max-width:1240px;margin:0 auto;padding:0 32px}
+/* 图库区全宽容器（对齐参考站 max-w-screen-2xl + px-8）。
+ * 1440 视口下：内容宽 = 1440 - 32×2 = 1376；4 列 332 + 3×16 间距 = 1376 */
+.gallery-wrap{max-width:1680px;margin:0 auto;padding:0 32px}
+
+/* 顶栏：品牌 + 右导航（搜索已移入 hero） */
+.site-header{background:var(--bg);border-bottom:1px solid var(--line);position:sticky;top:0;z-index:20}
+.header-inner{display:flex;align-items:center;justify-content:space-between;gap:24px;height:65px}
+.top-nav{display:flex;align-items:center;gap:22px}
+.top-nav a{
+  color:var(--ink-2);text-decoration:none;font-size:14px;font-weight:500;letter-spacing:.02em;
+  transition:color var(--dur) var(--ease);
+}
+.top-nav a:hover{color:var(--brand)}
+.top-nav a.nav-admin{
+  padding:6px 12px;border-radius:6px;border:1px solid var(--line);
+  transition:border-color var(--dur) var(--ease),color var(--dur) var(--ease),
+    background-color var(--dur) var(--ease);
+}
+.top-nav a.nav-admin:hover{border-color:var(--brand);background:var(--brand-soft)}
+
+/* ===== Hero：居中，logo 方块 → 双行标题 → 副标 → CTA（搜索框已搬进控制条，书10C） ===== */
+.hero{
+  display:flex;flex-direction:column;align-items:center;text-align:center;
+  padding:64px 24px 40px;                  /* 底部 40px：搬走搜索框后撑住版面，视觉不许塌 */
+  animation:fade-in .6s ease-out backwards;
+}
+.hero-logo{
+  width:128px;height:128px;border-radius:20px;background:#fff;
+  display:flex;align-items:center;justify-content:center;padding:16px;
+  box-shadow:0 0 0 4px rgba(255,255,255,.5),var(--shadow-xl);
+  transition:transform var(--dur) var(--ease),box-shadow var(--dur) var(--ease);
+}
+.hero-logo:hover{transform:translateY(-3px) scale(1.03);box-shadow:0 0 0 4px rgba(255,255,255,.6),0 8px 20px rgba(0,0,0,.18)}
+.hero-logo img{width:96px;height:96px;display:block;object-fit:contain}
+.hero-title{
+  margin:32px 0 0;font-size:60px;line-height:82.5px;font-weight:800;letter-spacing:-1.5px;
+  color:var(--ink-strong);text-wrap:balance;
+}
+/* 第二行渐变（参考站 from-blue-600 to-teal-500 → 本站收口品牌色系） */
+.hero-title-accent{
+  background:linear-gradient(to right,var(--brand) 0%,var(--brand-2) 100%);
+  -webkit-background-clip:text;background-clip:text;
+  color:transparent;letter-spacing:-1.5px;
+}
+.hero-slogan{
+  margin:24px 0 0;max-width:672px;font-size:20px;line-height:28px;color:var(--ink-2);
+  text-wrap:balance;
+}
+.hero-actions{display:flex;flex-wrap:wrap;justify-content:center;gap:12px;margin:32px 0 0}
+.btn-hero{
+  height:48px;padding:12px 24px;border-radius:999px;
+  border:1px solid var(--line);background:var(--bg);color:var(--ink);
+  font-size:16px;font-weight:500;cursor:pointer;
+  transition:border-color var(--dur) var(--ease),color var(--dur) var(--ease),
+    background-color var(--dur) var(--ease),box-shadow var(--dur) var(--ease),
+    transform var(--dur) var(--ease);
+}
+.btn-hero:hover{border-color:var(--brand);color:var(--brand);box-shadow:var(--shadow-sm)}
+.btn-hero:active{transform:scale(.96)}
+/* 三枚 hero 钮 = 浅底 / 深底 / 主色实底（对齐参考站三态） */
+.btn-hero-dark{background:var(--ink-strong);border-color:var(--ink-strong);color:#fff}
+.btn-hero-dark:hover{background:#1c2740;border-color:#1c2740;color:#fff;box-shadow:var(--shadow-sm)}
+.btn-hero-primary{background:var(--brand);border-color:var(--brand);color:#fff;font-weight:700;
+  box-shadow:var(--shadow-sm)}
+.btn-hero-primary:hover{background:#00539C;border-color:#00539C;color:#fff;box-shadow:var(--shadow-xl)}
+/* 书10C：搜索框从 .hero 搬进控制条，class 由 hero-search 改 control-search
+ * （判卷断言③：控制条内不含任何 .hero-* 元素）。原 max-width:672px/margin:32px 去掉——
+ * 在控制条内要撑满版心，否则吸住时上方带空白、宽度与版心脱节。 */
+.control-search{width:100%}
+.brand{display:flex;align-items:center;gap:10px;text-decoration:none;color:var(--ink);flex:0 0 auto;
+  transition:opacity var(--dur) var(--ease)}
+.brand:hover{opacity:.82}
+.brand-mark{width:28px;height:28px;display:block;flex:0 0 auto}
+.brand-name{display:flex;flex-direction:column;line-height:1.15;
+  font-size:16px;font-weight:600;letter-spacing:.01em}
+.brand-name em{font-style:normal;font-size:11px;font-weight:400;color:var(--ink-2);letter-spacing:.06em}
+.search{flex:1 1 auto;display:flex;justify-content:flex-end}
+/* 书10D 修正③：搜索框回归参考图——桌面窄居中（max-width:520px）、高 44px、字号 15px。
+ * 书10c 曾改成撑满版心（56px/18px）偏离参考图，本轮回改；控件自身浅底细边框圆角不动。
+ * 桌面用 max-width + margin auto 居中（grid area 内），移动端在媒体查询里全宽。 */
+#search-input{
+  width:100%;max-width:520px;height:44px;margin:0 auto;
+  padding:6px 36px 6px 32px;
+  border:1px solid var(--line);border-radius:999px;
+  background:var(--bg);color:var(--ink);font-size:15px;outline:none;
+  box-shadow:var(--shadow-sm);
+  transition:border-color var(--dur) var(--ease),box-shadow var(--dur) var(--ease);
+}
+#search-input::placeholder{color:var(--ink-3)}
+#search-input:hover{border-color:#C9D4DF}
+#search-input:focus{border-color:var(--brand);box-shadow:0 0 0 4px rgba(0,94,174,.12),var(--shadow-sm)}
+
+/* ===== 书10D 控制条：搜索框 + 分类胶囊 + 计数排序 三条一体，整体吸顶 =====
+ * 位置：main#gallery 内最前（容器够高才钉得住整段网格）；钉在页头正下方。
+ * top = 实测页头高度：桌面 66px（inner 65 + border 1px）、移动端 63px（inner 62 + border 1px）。
+ * z-index 25：高于页头(20) 防内容从缝里透出，低于详情弹窗(40) 与更新细条(60)。
+ * 视觉（书10D 回归参考图，书10E 去毛玻璃）：常态容器**完全隐形**——background 透明、
+ * 无 border-bottom、无 box-shadow，直接躺在页面冷白底（--bg-page:#F7F9FC）上；
+ * 吸顶态（app.js 加 .is-stuck）才垫一层页底冷白 (247,249,252) 的 82% 半透明 + hairline
+ * ——完全透明时卡片效果图会从控件后面滚过、文字糊成不可读；取页面底色而非白卡。
+ * **书10E：backdrop-filter 毛玻璃已去掉**（领导不喜欢），只留半透明底色（82% 不透明度
+ * 不加 blur 也保文字可读）；吸顶态不许有 box-shadow。
+ * 已知边界（非缺陷）：sticky 受 main#gallery 末端约束，滚到关于/页脚区控制条随容器离场。 */
+.control-bar{
+  /* 书10G 修（用户反馈：页头与控制条之间有横向缝隙露出瀑布流）：
+     top 改用 CSS 变量 --hdr-h，由 app.js 在 boot/resize 时按**实测页头高度**写入。
+     此前硬编码 66px —— 页头高度是内容决定的（字体渲染/浏览器缩放/语言环境都会变），
+     实测把页头压到 61px 时吸顶态露出 5px 缝、缝内就是 card-grid（复现用户截图）。
+     变量未就绪时回退 66px（桌面实测值）。 */
+  position:sticky;top:var(--hdr-h, 66px);z-index:25;
+  /* 书10F：常态即用**不透明页底冷白实底**——与页面底色同色（视觉上仍看不出底板），
+     但卡片滚过时被完全遮断、绝不透出。此前常态 transparent + 吸顶时才转实底，
+     转化靠 transition:background-color，实测滚动到吸顶临界点时量到 rgba(...,0.886)
+     这层过渡中间态，卡片从底下透出（用户红框标注的露出）。 */
+  background:var(--bg-page);
+  border-bottom:1px solid transparent;        /* 常态无可见边框（颜色透明） */
+  /* 书10F 修（用户反馈 2）：底色必须铺满**整个视口宽**，否则宽视口下控制条比视口窄
+     （旧 max-width:1680px + margin auto，实测 1920 下 barLeft=120/barW=1680），
+     两侧各 120px 空档里下方的卡片直接露出来（截图已复现）。
+     故本层不设 max-width —— 用 `.control-bar > *` 的内边距把内容对齐版心。 */
+  display:grid;grid-template-areas:"search" "cats" "count";gap:10px 0;   /* 书10E 反馈1：行间距 10px（+cats padding 10 = 20px） */
+  /* 书10F 修（用户反馈 2）：底色铺满整个视口宽（不设 max-width），内容用 padding 对齐 1680 版心。
+     `(100% - 1680px)/2 + 32px` 在宽视口下算出与 .gallery-wrap 卡片左缘一致的缩进（1920 → 152px），
+     窄视口下 max() 兜底 32px。百分比基准是 body 内容宽（已排除滚动条），比 100vw 更准。 */
+  padding:14px max(32px, calc((100% - 1680px) / 2 + 32px)) 0;
+  /* 书10F：**去掉 background-color 过渡**——吸顶是开关语义，渐变只会制造半透明露出窗口；
+     只保留 border-bottom-color 的过渡（细线显现更柔和）。 */
+  transition:border-bottom-color var(--dur) var(--ease);
+}
+/* 书10D 修正② + 书10E 反馈6 + 书10F：吸顶态同色实底 + hairline，无投影、无毛玻璃。
+ * 卡片滚到控制条下方被完全遮断（截断），不透过。 */
+.control-bar.is-stuck{
+  border-bottom-color:var(--line);
+}
+.control-search{grid-area:search;display:flex;justify-content:center}
+.control-bar .category-nav{grid-area:cats}
+.control-bar .grid-head{grid-area:count}
+
+/* 分类导航：px-4 py-2 圆角 8px 字号 14/500，激活=深底白字（对齐参考站胶囊）
+ * 书10C：胶囊收进控制条（与搜索框、计数排序一体吸顶），本条只管胶囊自身排布——
+ * sticky/top/z-index/白底/下线全部上交 .control-bar，nav 恢复为普通块。
+ * 原 padding:36px 0 8px 的 36px 上边距是「与 Hero 的间距」，进控制条后由控制条内边距统一管。 */
+.category-nav{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;padding:10px 0 2px}
+.cat-chip{
+  display:inline-flex;align-items:center;gap:8px;
+  padding:8px 16px;border:1px solid transparent;
+  border-radius:8px;background:transparent;
+  color:var(--ink-4);font-size:14px;font-weight:500;line-height:20px;cursor:pointer;
+  transition:background-color var(--dur) var(--ease),border-color var(--dur) var(--ease),
+    color var(--dur) var(--ease),transform var(--dur) var(--ease);
+}
+.cat-chip:hover{background:var(--bg-tag);color:var(--ink-strong)}
+.cat-chip:active{transform:scale(.97)}
+.cat-chip.is-active{background:var(--ink-strong);border-color:var(--ink-strong);color:#fff}
+.cat-count{
+  min-width:18px;height:18px;padding:0 5px;border-radius:9px;
+  background:var(--bg-tag);color:var(--ink-2);
+  font-size:11px;line-height:18px;text-align:center;font-variant-numeric:tabular-nums;
+}
+.cat-chip.is-active .cat-count{background:rgba(255,255,255,.22);color:#fff}
+
+/* 网格头：左「N 个结果」右排序钮。书10C：收进控制条，border-bottom 与 padding 上交控制条
+ * （书10D 起常态无边框、无底板，容器完全隐形；hairline 只在吸顶态出现）。 */
+.grid-head{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:6px 0 8px}
+.grid-title{margin:0;font-size:15px;font-weight:600;letter-spacing:.04em}
+.result-count{font-size:14px;color:var(--ink-3);font-variant-numeric:tabular-nums}
+.result-count b{color:var(--brand);font-weight:700}
+/* 书6：排序条右侧 = 说明文案 + 排序控件；文案解释多类计数口径 */
+.grid-head-right{display:flex;align-items:center;gap:10px;flex-wrap:wrap;justify-content:flex-end}
+.view-toggle{display:inline-flex;gap:2px;background:var(--bg-muted);border-radius:999px;padding:3px}
+.view-btn{border:0;background:transparent;color:var(--ink-4);font-size:13px;line-height:20px;font-weight:600;
+  padding:6px 16px;border-radius:999px;cursor:pointer;transition:background var(--dur) var(--ease),color var(--dur) var(--ease)}
+.view-btn:hover{color:var(--ink-strong)}
+.view-btn.is-active{background:var(--brand);color:#fff;font-weight:700;box-shadow:none}
+.view-btn:focus-visible{outline:2px solid var(--brand);outline-offset:2px}
+.hero-cats-line{margin-top:8px;font-size:13px;line-height:22px;color:var(--ink-3);letter-spacing:.01em}
+.hero-cats-label{color:var(--ink-3)}
+#hero-cats{color:var(--ink-2);font-weight:600}
+.sort-btn{
+  width:140px;height:40px;padding:8px 12px;border:1px solid var(--line);border-radius:6px;
+  background:var(--bg);color:var(--ink);font-size:14px;cursor:pointer;font-family:inherit;
+  transition:border-color var(--dur) var(--ease),color var(--dur) var(--ease),background-color var(--dur) var(--ease);
+}
+.sort-btn:hover{border-color:var(--brand);color:var(--brand)}
+.sort-btn.is-active{background:var(--ink-strong);border-color:var(--ink-strong);color:#fff}
+/* 排序控件（select）：去原生外观、补内边距给箭头让位 */
+select.sort-btn{
+  appearance:none;-webkit-appearance:none;padding:8px 30px 8px 12px;line-height:22px;
+  background-image:url("data:image/svg+xml;charset=utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M1 1l4 4 4-4' fill='none' stroke='%235A646E' stroke-width='1.5'/%3E%3C/svg%3E");
+  background-repeat:no-repeat;background-position:right 12px center;
+}
+
+/* 图库区：CSS columns 瀑布流（列内纵向填充，与参考站一致）。
+ * 书4 实测对齐：1440 下 4 列 / 卡宽 332 / 列间距 16 / 页边距 32 / 圆角 12。
+ * 档位对齐参考站 Tailwind 断点（实测 1440/1280/1024=4 列、768=3 列、390/375=2 列）：
+ *   ≥1024 → 4 列 / padding 32；768~1023 → 3 列 / padding 24；≤767 → 2 列 / padding 16 */
+.card-grid{columns:4;column-gap:16px;padding:16px 0 56px}
+.card{
+  position:relative;
+  break-inside:avoid;page-break-inside:avoid;
+  background:var(--bg);border-radius:var(--radius);
+  overflow:hidden;cursor:pointer;box-shadow:var(--shadow-sm);
+  margin:0 0 16px;display:inline-block;width:100%;
+  transition:box-shadow var(--dur) var(--ease),translate var(--dur) var(--ease);
+}
+/* 任务4 动画治理：入场 fade-in 只归「首屏与滚动续渲批次」的卡（.is-enter，app.js 按批打）；
+   筛选/搜索/排序触发的重渲染不打这个类 → 不播动画（旧行为是 .card 无条件重播，每次筛选整屏闪）。 */
+.card.is-enter{animation:fade-in .6s ease-out backwards}
+.card:hover{box-shadow:var(--shadow-xl);translate:0 -4px}
+.card:focus-within{outline:2px solid var(--brand);outline-offset:2px}
+.card-cover{position:relative;background:var(--bg-hold);overflow:hidden}
+/* 骨架态（2026-10-13）：图未到时封面轻微呼吸——让「在加载」区别于「加载不出来」。
+   刻意不用渐变扫光：图库视觉主体是效果图，容器不加装饰性渐变（check.js 有断言守着）。 */
+.card-cover.is-loading{animation:cover-pulse 1.4s ease-in-out infinite}
+@keyframes cover-pulse{0%,100%{opacity:1}50%{opacity:.7}}
+.card-cover img{
+  width:100%;height:100%;object-fit:cover;display:block;
+  transform:scale(1);
+  opacity:0;transition:opacity .35s var(--ease),transform var(--dur-img) var(--ease);
+}
+.card-cover img.is-loaded{opacity:1}
+/* 渐进渲染哨兵：零高度不占位，只作「该续渲下一批了」的触发点 */
+.grid-sentinel{height:1px}
+.card:hover .card-cover img{transform:scale(1.1)}
+/* 压字层（书16：.card-foot 现直接作卡片信息层；瀑布态绝对覆盖封面 + hover 渐显，网格态转文档流常显） */
+.card-foot{
+  position:absolute;inset:0;display:flex;flex-direction:column;align-items:flex-start;justify-content:flex-end;
+  background:linear-gradient(to top,rgba(0,0,0,.80) 0%,rgba(0,0,0,0) 55%);
+  opacity:0;transition:opacity var(--dur) var(--ease);
+  pointer-events:none;padding:14px;width:100%;max-height:100%;overflow:hidden;
+}
+.card:hover .card-foot,.card:focus-within .card-foot{opacity:1}
+.card-title{
+  margin:0 0 4px;font-size:15px;font-weight:700;line-height:21px;color:#fff;
+  text-shadow:0 1px 3px rgba(0,0,0,.55);
+  display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;
+}
+.card-sub{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:6px}
+.card-author{font-size:12px;line-height:16px;color:rgba(255,255,255,.82)}
+.model-badge{
+  font-size:11px;color:var(--ink-2);border:1px solid var(--line);
+  border-radius:4px;padding:2px 7px;line-height:18px;
+  max-width:140px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
+}
+.card-sub .model-badge{background:rgba(255,255,255,.9);border-color:transparent;color:var(--ink-2)}
+.card-tags{display:flex;flex-wrap:wrap;gap:6px}
+/* 书16：标签仅在网格态常显；瀑布流只显示标题+贡献者（不显示标签） */
+.card-foot .card-tags{display:none}
+/* 卡片压字层上的标签：半透明白底，图片上可读 */
+.card-foot .tag{background:rgba(255,255,255,.16);color:#fff}
+/* 详情页标签：沿用本站标签风格（品牌色浅底） */
+#detail-tags .tag{background:var(--bg-tag);color:var(--ink-2);padding:6px 12px;
+  border-radius:999px;font-size:12px;line-height:16px}
+.empty{column-span:all;color:var(--ink-3);font-size:14px;padding:48px 0;text-align:center}
+@media (max-width:1023px){
+  .card-grid{columns:3}
+  .wrap,.gallery-wrap{padding:0 24px}
+  .control-bar{padding:14px 24px 0}   /* 书10F：内容内边距随版心断点同步（底色仍满视口宽） */
+}
+@media (max-width:767px){.card-grid{columns:2;column-gap:8px}}
+
+/* ===== 书16：网格视图（瀑布流 / 网格 互切） ===== */
+.card-grid.is-grid{
+  display:grid;grid-template-columns:repeat(4,1fr);column-gap:16px;row-gap:16px;
+  padding:0;align-items:stretch;
+}
+@media (max-width:1023px){.card-grid.is-grid{grid-template-columns:repeat(3,1fr)}}
+@media (max-width:767px){.card-grid.is-grid{grid-template-columns:repeat(2,1fr)}}
+.card-grid.is-grid .card{
+  display:flex;flex-direction:column;width:auto;margin:0;break-inside:auto;
+}
+.card-grid.is-grid .card:hover{translate:none}
+.card-grid.is-grid .card-cover{position:relative;aspect-ratio:4/5 !important;width:100%}
+.card-grid.is-grid .card-foot{
+  position:static;opacity:1;background:none;pointer-events:auto;
+  max-height:none;overflow:visible;padding:12px 14px 14px;
+  flex-direction:column;align-items:stretch;justify-content:flex-start;
+}
+.card-grid.is-grid .card-title{color:var(--ink-strong);text-shadow:none;font-size:15px;line-height:21px}
+.card-grid.is-grid .card-sub{margin-bottom:0}
+.card-grid.is-grid .card-author{color:var(--ink-3);font-size:13px}
+.card-grid.is-grid .card-tags{display:flex;margin-top:10px;gap:6px}
+.card-grid.is-grid .tag{background:var(--bg-tag);color:var(--ink-2);backdrop-filter:none;
+  padding:3px 10px;border-radius:999px;font-size:12px;line-height:18px}
+
+/* ===== 点卡弹窗：1080×864 居中，左 60% 图 / 右 40% 信息（对齐 aiart.pics） ===== */
+.detail{
+  position:fixed;inset:0;z-index:40;display:none;
+  align-items:center;justify-content:center;
+  animation:overlay-in var(--dur) var(--ease);
+}
+.detail.is-open{display:flex}
+.detail-mask{position:absolute;inset:0;background:rgba(0,0,0,.8)}
+.detail-panel{
+  position:relative;
+  /* 书5 任务2：随视口伸缩 + clamp 弹性上限（任务0 裁决）：
+     1440×960 视口→1320×896（验收值），1920×1080→1440×972（对齐参考站 75vw×90vh 真值） */
+  width:min(calc(100vw - 80px), clamp(1320px, 75vw, 1440px));
+  height:min(calc(100vh - 64px), clamp(900px, 90vh, 972px));
+  background:var(--bg);border-radius:16px;overflow:hidden;
+  display:grid;grid-template-columns:60% 40%;
+  box-shadow:0 24px 64px rgba(0,0,0,.32);
+  animation:panel-in var(--dur) var(--ease);
+}
+/* 移动端拖拽把手（桌面隐藏，不占 grid 位） */
+.detail-handle{display:none;grid-column:1 / -1}
+.btn-close{
+  position:absolute;top:16px;right:16px;z-index:3;
+  width:42px;height:42px;border:1px solid rgba(0,0,0,.06);border-radius:999px;
+  background:rgba(255,255,255,.9);backdrop-filter:blur(4px);
+  color:var(--ink-strong);font-size:22px;line-height:1;cursor:pointer;
+  box-shadow:var(--shadow-sm);
+  transition:background-color var(--dur) var(--ease),color var(--dur) var(--ease),
+    transform var(--dur) var(--ease);
+}
+.btn-close:hover{background:#fff;color:var(--brand)}
+.btn-close:active{transform:scale(.94)}
+
+/* 左 60% 图区：冷调浅底 + 图圆角 16（对齐参考站 bg-muted 版式 + rounded-2xl） */
+.detail-media{position:relative;background:var(--bg-muted);padding:16px;overflow:hidden}
+/* 书10F 移动端：图片区固定尺寸 + 横向 scroll-snap 轨道（每张一屏、可滑动切换、点击看大图）。
+   旧实现 #detail-image{height:auto} 让容器随图长短伸缩，切换不同比例图时整块内容跳动；
+   现在容器尺寸固定、图片 object-fit:contain 自适，切换零位移。 */
+.detail-track{display:none}
+#detail-image{
+  width:100%;height:100%;object-fit:contain;display:block;
+  border-radius:16px;
+  animation:fade-in var(--dur-img) var(--ease);
+}
+/* 大图浮层（书10F）：再点一下 / Esc / 关闭钮退出；z 高于详情弹窗(40) */
+.lightbox{
+  position:fixed;inset:0;z-index:70;display:none;
+  align-items:center;justify-content:center;
+  background:rgba(16,20,26,.92);padding:16px;
+}
+.lightbox.is-open{display:flex}
+.lightbox-img{max-width:100%;max-height:100%;object-fit:contain;display:block}
+.lightbox-close{
+  position:absolute;top:14px;right:14px;width:36px;height:36px;
+  border:0;border-radius:50%;background:rgba(255,255,255,.16);color:#fff;
+  font-size:20px;line-height:1;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;
+}
+.lightbox-close:hover{background:rgba(255,255,255,.3)}
+.nav-arrow{
+  position:absolute;top:50%;transform:translateY(-50%);
+  width:38px;height:38px;border-radius:50%;border:1px solid rgba(0,0,0,.06);
+  background:rgba(255,255,255,.9);backdrop-filter:blur(4px);
+  color:var(--brand);font-size:20px;line-height:1;cursor:pointer;
+  transition:background-color var(--dur) var(--ease),
+    box-shadow var(--dur) var(--ease),transform var(--dur) var(--ease);
+}
+.nav-arrow:hover{background:#fff;box-shadow:var(--shadow-sm)}
+.nav-arrow:active{transform:translateY(-50%) scale(.92)}
+.nav-arrow.prev{left:16px}
+.nav-arrow.next{right:16px}
+.img-count{
+  position:absolute;left:50%;transform:translateX(-50%);bottom:16px;
+  background:rgba(255,255,255,.9);backdrop-filter:blur(4px);
+  border:1px solid rgba(0,0,0,.06);
+  border-radius:999px;padding:6px 12px;font-size:12px;color:var(--ink-2);
+  font-variant-numeric:tabular-nums;pointer-events:none;box-shadow:var(--shadow-sm);
+}
+
+/* 右 40% 信息区：padding 32（对齐参考站） */
+/* 书5 任务2：弹窗级禁滚——右区一页展示完整，长内容由提示词卡内滚吸收 */
+.detail-body{padding:32px;overflow:hidden;display:flex;flex-direction:column}
+.detail-body-head{display:flex;align-items:center;gap:8px;margin-bottom:8px}
+/* 模型徽章：12px/600 浅底+描边（对齐参考站，色收口品牌） */
+.detail-model-badge{
+  display:inline-block;padding:4px 8px;border-radius:6px;
+  background:var(--brand-soft);color:var(--brand);
+  border:1px solid rgba(0,94,174,.18);
+  font-size:12px;font-weight:600;line-height:16px;letter-spacing:.3px;
+}
+.detail-title{margin:0 0 8px;font-size:30px;font-weight:700;line-height:37.5px;
+  color:var(--ink-strong);flex:1 1 auto}
+/* 书6：详情页分类改多 chip（一条可属多类）。容器 #detail-category id 不变，
+   chip 视觉与原单徽章一致（品牌柔底 + 品牌色字 + 999px 胶囊） */
+.detail-category{flex:0 0 auto;display:flex;flex-wrap:wrap;gap:6px;min-width:0}
+.detail-category .detail-cat-chip{font-size:12px;color:var(--brand);background:var(--brand-soft);
+  border-radius:999px;padding:6px 12px;white-space:nowrap;line-height:16px}
+.detail-author-line{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin:0 0 12px;
+  font-size:12px;color:var(--ink-2)}
+.detail-author-line .detail-author{color:var(--brand);font-weight:500}
+.block{margin-bottom:16px}
+.block-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}
+.block-label{margin:0 0 8px;font-size:12px;font-weight:600;letter-spacing:.06em;
+  color:var(--ink-3);text-transform:uppercase}
+.block-head .block-label{margin:0}
+/* 提示词卡：对齐参考站 bg-slate-50 rounded-xl border p-4 */
+.prompt-card{
+  background:var(--bg-tag);border:1px solid var(--line);border-radius:12px;
+  padding:16px;margin-bottom:12px;position:relative;
+  display:flex;flex-direction:column;flex:0 1 auto;min-height:0;
+}
+/* 正向提示词卡：吃右区剩余空间（内滚主区），长内容被吸收、弹窗级不溢出 */
+.prompt-card:not(#detail-negative-block){flex:1 1 auto}
+#detail-prompt{flex:1 1 auto;min-height:0;max-height:430px}
+/* 负向提示词：短文本小 cap 内滚 */
+#detail-negative{flex:0 1 auto;min-height:0;max-height:120px}
+.prompt-card .block-head{margin-bottom:8px}
+.btn-copy-sm{
+  padding:4px 8px;border-radius:8px;border:1px solid var(--line);
+  background:#fff;color:var(--brand);font-size:12px;font-weight:500;cursor:pointer;
+  transition:border-color var(--dur) var(--ease),background-color var(--dur) var(--ease),
+    transform var(--dur) var(--ease);
+}
+.btn-copy-sm:hover{border-color:var(--brand);background:var(--brand-soft)}
+.btn-copy-sm:active{transform:scale(.96)}
+/* 复制反馈 = 按钮自体切换（app.js 负责），copy-feedback 仅作 aria-live 无障碍播报区（视觉隐藏） */
+.copy-feedback{
+  position:absolute;width:1px;height:1px;overflow:hidden;
+  clip-path:inset(50%);white-space:nowrap;border:0;padding:0;margin:-1px;
+}
+.prompt-block{
+  margin:0;padding:8px 12px;background:#fff;border:1px solid var(--line);
+  border-radius:6px;
+  font:14px/20px ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+  white-space:pre-wrap;word-break:break-word;color:var(--ink);
+  /* 书5 任务2：提示词卡内滚（唯一滚动模块），滚动条视觉隐藏 */
+  max-height:430px;overflow-y:auto;
+  scrollbar-width:none;-ms-overflow-style:none;
+}
+.prompt-block::-webkit-scrollbar{display:none}
+.prompt-block.is-negative{color:var(--ink-2)}
+.is-hidden{display:none}
+.tag-row{display:flex;flex-wrap:wrap;gap:8px}
+.meta-grid{
+  display:grid;grid-template-columns:64px 1fr;gap:8px 12px;margin:0;
+  font-size:13px;
+}
+.meta-grid dt{color:var(--ink-3)}
+.meta-grid dd{margin:0;word-break:break-word}
+.meta-grid-sub{padding-top:16px;border-top:1px solid var(--line);margin:8px 0 16px}
+/* 底部 CTA 条：收口为「复制提示词」主按钮通栏（分享按钮已删——书5 任务1） */
+.detail-cta{display:flex;margin-top:auto;padding-top:12px}
+.btn-copy-main{
+  width:100%;padding:16px 0;border-radius:12px;border:1px solid var(--brand);
+  background:var(--brand);color:#fff;font-size:16px;font-weight:700;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;
+  box-shadow:var(--shadow-sm);
+  transition:background-color var(--dur) var(--ease),box-shadow var(--dur) var(--ease),
+    transform var(--dur) var(--ease);
+}
+.btn-copy-main:hover{background:#00539C;border-color:#00539C;box-shadow:var(--shadow-xl)}
+.btn-copy-main:active{transform:scale(.98)}
+
+/* 关于（#about 锚点落地）：品牌柔色通栏带 + 顶部品牌规线，与上方图库区做明显区块区分。
+ * 品牌色只做结构色（底/线），白卡承载文字，Swiss 编辑风。 */
+.about{
+  background:var(--brand-soft);border-top:3px solid var(--brand);
+  padding:56px 0 48px;scroll-margin-top:20px;
+}
+.about-inner{max-width:960px;margin:0 auto;padding:0 32px}
+.about-kicker{margin:0 0 8px;font-size:11px;font-weight:700;letter-spacing:.18em;color:var(--brand)}
+.about-title{margin:0 0 14px;font-size:26px;line-height:1.35;letter-spacing:.01em}
+.about-lead{margin:0 0 24px;max-width:720px;font-size:15px;line-height:1.95;color:var(--ink-2)}
+.about-lead strong{color:var(--ink);font-weight:600}
+.about-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:20px}
+.about-card{background:var(--bg);border:1px solid var(--line);border-radius:var(--radius);padding:20px 18px}
+.about-card h3{margin:0 0 10px;font-size:15px;letter-spacing:.02em}
+.about-card h3::before{content:'';display:block;width:24px;height:3px;background:var(--brand);margin-bottom:12px}
+.about-card p{margin:0;font-size:13px;line-height:1.95;color:var(--ink-2)}
+.about-asset{margin:0 0 20px;max-width:820px;font-size:13px;line-height:1.95;color:var(--ink-2)}
+.about-asset strong{color:var(--brand);font-weight:700}
+.about-credit{
+  background:var(--bg);border:1px solid var(--line);border-left:3px solid var(--brand);
+  border-radius:0 var(--radius) var(--radius) 0;padding:16px 18px;
+}
+.about-credit-org{margin:0 0 6px;font-size:14px;font-weight:700;letter-spacing:.02em}
+.about-credit-note{margin:0;font-size:12px;line-height:1.95;color:var(--ink-3)}
+@media (max-width:767px){
+  .about{padding:36px 0 32px}
+  .about-inner{padding:0 16px}
+  .about-title{font-size:21px}
+  .about-grid{grid-template-columns:1fr}
+}
+
+.site-footer{border-top:1px solid var(--line);background:var(--bg);padding:20px 0;
+  color:var(--ink-3);font-size:12px;text-align:center}
+.footer-main{margin:0;line-height:20px}
+.footer-note{margin:6px 0 0;font-size:11px;line-height:18px;color:var(--ink-3);opacity:.85}
+
+/* 悬浮回顶：右下角固定，滚过约一屏后浮现（app.js 切 .is-visible）。
+ * 白底描边 + 品牌色箭头（品牌色只做结构/焦点色），弹窗打开时随锁滚一并隐藏。
+ * z-index 30：高于内容与顶栏（20），低于弹窗遮罩（40），不与弹窗抢层。 */
+.back-to-top{
+  position:fixed;right:28px;bottom:28px;z-index:30;
+  width:44px;height:44px;padding:0;
+  display:flex;align-items:center;justify-content:center;
+  background:var(--bg);color:var(--brand);
+  border:1px solid var(--line);border-radius:50%;
+  box-shadow:var(--shadow-sm);cursor:pointer;
+  opacity:0;visibility:hidden;transform:translateY(8px);
+  transition:opacity var(--dur) var(--ease),transform var(--dur) var(--ease),
+    visibility var(--dur) var(--ease),border-color var(--dur) var(--ease);
+}
+.back-to-top.is-visible{opacity:1;visibility:visible;transform:translateY(0)}
+.back-to-top:hover{border-color:var(--brand);box-shadow:var(--shadow-xl)}
+.back-to-top:active{transform:translateY(0) scale(.92)}
+body.detail-open .back-to-top{opacity:0;visibility:hidden}
+@media (max-width:767px){
+  .back-to-top{right:16px;bottom:16px;width:40px;height:40px}
+}
+
+body.detail-open{overflow:hidden}
+
+/* 「内容已更新」细条（任务1 SWR：后台拉新发现数据变化）：顶部居中悬浮药丸，
+ * 3 秒自动消失、可点 × 关闭（app.js showUpdateToast 动态创建，index.html 无此元素）。
+ * z-index 60：高于详情弹窗(40)与移动端吸顶 X(50)——弹窗开着时数据更新也该让用户知道。 */
+.update-toast{
+  position:fixed;top:16px;left:50%;transform:translateX(-50%);z-index:60;
+  display:flex;align-items:center;gap:10px;height:36px;padding:0 8px 0 16px;
+  border-radius:999px;background:var(--ink-strong);color:#fff;
+  font-size:13px;line-height:1;box-shadow:var(--shadow-xl);
+  animation:toast-in var(--dur) var(--ease);
+}
+.update-toast-text{white-space:nowrap}
+.update-toast-close{
+  width:22px;height:22px;border:0;border-radius:50%;padding:0;flex:0 0 auto;
+  background:rgba(255,255,255,.16);color:#fff;font-size:14px;line-height:1;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;
+  transition:background-color var(--dur) var(--ease);
+}
+.update-toast-close:hover{background:rgba(255,255,255,.3)}
+@keyframes toast-in{from{opacity:0;transform:translate(-50%,-8px)}to{opacity:1;transform:translate(-50%,0)}}
+
+/* ===== 移动端适配（对齐参考站 390/375/768 实测） ===== */
+@media (max-width:767px){
+  .wrap,.gallery-wrap{padding:0 16px}
+  .header-inner{gap:12px;height:auto;padding:12px 0}
+  .top-nav{gap:14px}
+  .hero{padding:44px 16px 28px}                /* 底部 28px：搬走搜索框后撑住，不许塌 */
+  .hero-logo{width:96px;height:96px;border-radius:20px;padding:12px}
+  .hero-logo img{width:72px;height:72px}
+  .hero-title{margin-top:20px;font-size:32px;line-height:42px;letter-spacing:-.5px}
+  .hero-title-accent{letter-spacing:-.5px}
+  .hero-slogan{margin-top:14px;font-size:15px;line-height:24px}
+  .hero-actions{margin-top:20px;gap:8px}
+  .btn-hero{height:40px;padding:8px 16px;font-size:14px}
+  #search-input{max-width:none;height:40px;padding:6px 20px 6px 18px;font-size:14px}   /* 书10D：移动端全宽 40px */
+  /* 书10E 控制条移动端两行：行1 = 搜索框 + 排序（等高对齐），行2 = 计数 + 胶囊（**横滑 + 全部固定**）。
+     .grid-head 用 display:contents 拆开，其两枚子元素分赴两个 area——骨架断言的
+     pick('.grid-head') 只在桌面段量测（display:contents 元素无盒），移动端段不量。
+     书10E 反馈2：胶囊改横滑（推翻书10D 的 wrap），「全部」用 order:-1 排到最前 +
+     position:sticky;left:0 横滑时钉在左侧（纯 CSS，不动 DOM/JS）；chip 不缩，横滚由容器出。
+     书10E 反馈5：排序与搜索框等高（40px）+ 垂直居中，顶边底边都齐。 */
+  .control-bar{
+    top:var(--hdr-h, 63px);   /* 书10G：同桌面，用实测页头高（移动端回退值 63px） */
+    /* 书10F：三行 areas（与桌面同序：搜索+排序 → 胶囊 → 计数）。
+       此前用 "search sort"/"count cats" 两行两列，第二行的 1fr+120px 把胶囊挤进 120px 窄缝
+       （实测 clientW:120、scrollW:778，横滑形同虚设）。改三行后胶囊与计数各占满整行。 */
+    grid-template-areas:"search sort" "cats cats" "count count";
+    grid-template-columns:1fr 120px;
+    gap:10px 12px;padding:10px 16px;   /* 移动端固定 16px（视口 <1680 时公式退化为 32px 下限，此处覆盖为 16） */
+  }
+  /* 移动端 .control-search 改普通块：桌面是 flex 居中（搜索框窄居中），而 flex + input
+     width:100% 会与 grid 列宽循环塌缩（实测 wrap 宽 0、input 溢出成 40px）。 */
+  .control-search{display:block}
+  .grid-head{display:contents}
+  #result-count{grid-area:count;align-self:center;justify-self:start}
+  /* 书16 修：#view-toggle 加入 .grid-head-right 后，移动端 120px "sort" 窄列装不下
+     「切换控件+排序」两件（flex-wrap 把排序挤到控件下一行，ui4 任务4⑤/任务1 双红）。
+     grid-head-right 移动端 display:contents 拆开——排序留行1 与搜索同行（书10E 设计不变），
+     切换控件下放行3 计数行右端（vtLeft < sortLeft 仍成立，DOM 零改动）。 */
+  .grid-head-right{display:contents}
+  #view-toggle{grid-area:count;justify-self:end;align-self:center}
+  #grid-sort{grid-area:sort;justify-self:end;align-self:center}   /* 书10E 反馈5：与搜索框同行等高对齐 */
+  /* 书16：.sort-note 已删除（视图切换控件替代说明） */
+  .sort-btn{width:120px;height:40px}           /* 书10E 反馈5：与搜索框同高，同行才齐 */
+  .category-nav{grid-area:cats;flex-wrap:nowrap;overflow-x:auto;justify-content:flex-start;
+    padding:0;gap:6px;scrollbar-width:none;-ms-overflow-style:none;min-width:0}
+  .category-nav::-webkit-scrollbar{display:none}
+  .cat-chip{flex:0 0 auto;padding:6px 10px;font-size:13px;gap:6px}   /* chip 缩一档限高、不缩宽 */
+  /* 「全部」固定：order:-1 排到最前 + sticky left:0 横滑钉住；实底（页底冷白）遮住后面滚过的胶囊。
+     书10F 修：实底必须加 :not(.is-active)，否则会顶掉选中态深底 → 白底白字不可见。
+     书10F 再修（用户反馈 1）：**删掉右侧 ::after 渐隐**——那片渐变叠在选中态上形成黑污渍
+     （截图里的黑色渐块），属纯污染，固定区边界靠实底本身的硬边即可。 */
+  .cat-chip[data-category="全部"]{
+    order:-1;position:sticky;left:0;z-index:1
+  }
+  .cat-chip[data-category="全部"]:not(.is-active){
+    background:var(--bg-page)
+  }
+  /* 书5 任务3：移动端详情改全屏层——废 44%/56% 两栏与拖拽把手，
+     满视口 flex-col 整块滚动：图上（纵横比保真）→信息流→提示词卡（内滚）→CTA */
+  .detail-panel{
+    width:100vw;height:100vh;max-width:100vw;max-height:100vh;
+    border-radius:0;
+    display:flex;flex-direction:column;
+    grid-template-columns:none;
+    overflow-x:hidden;overflow-y:auto;
+  }
+  .detail-handle{display:none}
+  /* 书10F：图片区固定高度（不随图长短伸缩）+ 轨道横滑。旧 #detail-image{height:auto} 会
+     让容器随图比例变高变矮，切图时下方信息整体跳动。改固定高度后：容器尺寸恒定，
+     图片 contain 自适；轨道每格一屏、scroll-snap 吸附，滑动切换无位移。 */
+  .detail-media{padding:12px;flex:0 0 auto;height:46vh;min-height:240px}
+  .detail-track{
+    display:flex;height:100%;width:100%;
+    overflow-x:auto;overflow-y:hidden;scroll-snap-type:x mandatory;
+    -webkit-overflow-scrolling:touch;scrollbar-width:none;-ms-overflow-style:none;
+  }
+  .detail-track::-webkit-scrollbar{display:none}
+  .detail-cell{
+    flex:0 0 100%;width:100%;height:100%;
+    scroll-snap-align:center;scroll-snap-stop:always;
+    display:flex;align-items:center;justify-content:center;
+  }
+  .detail-shot{
+    max-width:100%;max-height:100%;object-fit:contain;display:block;
+    border-radius:12px;cursor:zoom-in;
+  }
+  #detail-image{display:none}                 /* 移动端由轨道承载；元素保留在 DOM（25 id 在册） */
+  .detail-body{padding:24px 24px 48px;flex:0 0 auto;overflow:visible}
+  .detail-title{font-size:22px;line-height:28px}
+  /* 书5 遗留拍板：X 吸顶——fixed 相对视口，不随 .detail-panel 整层滚动离场 */
+  .btn-close{position:fixed;top:12px;right:12px;width:38px;height:38px;font-size:20px;z-index:50}
+  .btn-copy-main{padding:10px 0;font-size:15px}
+  .prompt-block{max-height:200px}
+}
