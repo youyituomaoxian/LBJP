@@ -100,9 +100,9 @@
 
   // ---------- GitHub contents API 客户端（书8 任务4）----------
   // 浏览器直连 api.github.com，零后端：写入即 commit，Pages 自动重建。
-  // 配置：repoSlug 默认 youyituomaoxian/tm-promptforge（?repo= 覆盖）、branch 默认 gh-pages。
+  // 配置：repoSlug 默认 youyituomaoxian/LBJP（个人版仓库；?repo= 可覆盖）、branch 默认 gh-pages。
   // 令牌只在内存（进 Authorization 头），不落盘、不进 URL、不打日志。
-  var GH_DEFAULT_REPO = 'youyituomaoxian/tm-promptforge';
+  var GH_DEFAULT_REPO = 'youyituomaoxian/LBJP';
   var GH_DEFAULT_BRANCH = 'gh-pages';
 
   function ghConfig(loc) {
@@ -1529,7 +1529,7 @@
   // ---------- 暂存箱（书15：IndexedDB 持久化；点「保存」=入箱，不发任何请求）----------
   // 库 tm-promptforge-staging：store entries（元数据，keyPath id）+ images（Blob，key '<id>/<i>'）。
   // DB 打开失败 → 降级内存模式 + 横幅提示（降级是兜底不是常态）。
-  var BOX_DB = 'tm-promptforge-staging';
+  var BOX_DB = 'lbjp-promptforge-staging';   // 个人版独立暂存箱（github.io 同源，不能与团队版混用）
   var BOX_STORE_META = 'entries';
   var BOX_STORE_IMG = 'images';
   var boxDb = null;
