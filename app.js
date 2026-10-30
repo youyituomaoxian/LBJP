@@ -1,4 +1,4 @@
-/* 个人提示词库 · 游客侧单页逻辑
+/* LBJP 个人提示词库 · 游客侧单页逻辑
  * 无构建。浏览器里直接跑；Node 里 require 同一份纯函数供 verify/check.js 断言（非 mock）。
  */
 (function (root, factory) {
@@ -806,7 +806,7 @@
   // 单键 tm-prompt-cache-v1 存 {ts, entries, categories, dims}——纯公开数据、零凭据字段
   // （制度红线：令牌只进 sessionStorage，localStorage 只许放公开数据缓存）。
   // 回访：命中即先渲染（秒开）→ 后台带时间戳拉新 → 数据变了才静默重渲 + 「内容已更新」细条。
-  var CACHE_KEY = 'tm-prompt-cache-v1';
+  var CACHE_KEY = 'lbjp-prompt-cache-v1';   // github.io 同源，不能与团队版缓存混用
   function readCache(view) {
     try {
       var raw = view.localStorage.getItem(CACHE_KEY);

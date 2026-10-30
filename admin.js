@@ -629,7 +629,7 @@
   // [书14 · 领导 2026-10-15 拍板「删掉口令门，只留令牌」] 原先上方还有一道静态「访问口令」
   // 门（PBKDF2 哈希嵌在公开的 admin.html 里，防误触、非安全边界），已整体下线。
   // 真正的权限边界是用户的 GitHub 令牌（只存 sessionStorage，关标签页即失效）。
-  var GATE_KEY = 'tm_gh_token';
+  var GATE_KEY = 'lbjp_gh_token';   // 个人版独立令牌键（同源不与团队版互串）
 
   function gateMode() {
     var l = (typeof window !== 'undefined' && window.location) || {};
