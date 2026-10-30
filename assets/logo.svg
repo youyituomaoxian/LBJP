@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <!-- LBJP 个人版标识：花括号内一粒火花 = 提示词的灵感火花 -->
+  <g fill="none" stroke="#005EAE" stroke-width="4" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M22 14c-5 0-7 2-7 7v6c0 4-2 6-6 6 4 0 6 2 6 6v6c0 5 2 7 7 7"/>
+    <path d="M42 14c5 0 7 2 7 7v6c0 4 2 6 6 6-4 0-6 2-6 6v6c0 5-2 7-7 7"/>
+  </g>
+  <path fill="#005EAE" d="M32 22.5l2.6 6.4 6.4 2.6-6.4 2.6L32 40.5l-2.6-6.4-6.4-2.6 6.4-2.6L32 22.5z"/>
+  <circle cx="38.5" cy="41.5" r="2.2" fill="#005EAE"/>
+</svg>
