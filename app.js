@@ -847,8 +847,14 @@
     doc.body.appendChild(bar);
   }
 
+  // 书18b：boot 里的**活状态实例**。hero 轮播（hero-cards.js）打开弹窗必须复用这一个
+  // 实例——closeDetail 有 `if (!st.openId) return` 守卫，若轮播另立 state 调 openDetail，
+  // boot 侧关闭按钮绑定的 st.openId 仍为 null → 点关闭/遮罩/Esc 全部被守卫弹掉（实测踩过）。
+  var BOOT_ST = null;
+
   function boot(doc) {
     var st = state(doc);
+    BOOT_ST = st;
     syncHeaderVar(doc);         // 书10G：先写入实测页头高（sticky top 依据），再判定吸顶态
     observeHeader(doc);         // 书10G：页头尺寸后续任何变化都同步
     syncControlBarStuck(doc);   // 书10C：首屏即同步吸顶态（刷新时若已在深滚位置）
@@ -1051,6 +1057,7 @@
     formatDate: formatDate,
     boot: boot,
     state: state,
+    getBootState: function () { return BOOT_ST; },   // 书18b：hero 轮播共用同一状态实例
     renderAll: renderAll,
     renderNavCategories: renderNavCategories,
     renderGrid: renderGrid,

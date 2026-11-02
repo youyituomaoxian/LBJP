@@ -22,10 +22,9 @@
   </div>
 </header>
 
+<!-- 书18b：hero-logo 白卡已按用户要求去掉（顶栏已有品牌标识，hero 不再重复；
+     同时压缩 hero 垂直节奏，保证滚动卡带完整落进首屏） -->
 <section class="hero">
-  <div class="hero-logo" aria-hidden="true">
-    <img src="assets/logo.svg" alt="">
-  </div>
   <h1 class="hero-title">AI 图像生成提示词<br><span class="hero-title-accent">灵感库</span></h1>
   <p class="hero-slogan">已收录 <span id="hero-count">…</span> 条 · 覆盖 <span id="hero-cats"></span></p>
   <div class="hero-actions">
@@ -33,6 +32,16 @@
     <button id="hero-latest" type="button" class="btn-hero btn-hero-dark">最近更新</button>
     <button id="hero-copy" type="button" class="btn-hero btn-hero-primary">复制随机提示词</button>
   </div>
+</section>
+
+<!-- 书18 Hero 弧形卡片轮播：视觉上是 hero 的一部分（紧跟 hero-actions 之下，无缝衔接），
+     独立成节而非塞进 .hero，是因为卡带需要全视口宽（hero 有 24px 内边距，塞进去要做
+     100vw 负边距修正，还会被 hero 的 fade-in 入场动画整体拖累加载表现）。
+     数据与交互全部由 hero-cards.js 自管：拉 entries.json 抽 12 条、右→左漂移、
+     可拖拽带惯性、曲面几何每帧重算；点击走 PromptLib.openDetail 与瀑布流同弹窗。
+     数据不可达时整段 display:none（hero-cards.js 兜底），不占版面。 -->
+<section id="hero-reels" class="hero-reels" aria-label="提示词精选滚动展示">
+  <div class="reel-band"></div>
 </section>
 
 <!-- 书10C 控制条：搜索框 + 分类胶囊 + 计数排序 三条一体整体吸顶（页头正下方）。
@@ -180,5 +189,6 @@
 </button>
 
 <script src="app.js"></script>
+<script src="hero-cards.js"></script>
 </body>
 </html>

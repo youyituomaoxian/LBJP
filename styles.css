@@ -70,22 +70,16 @@ body{
 }
 .top-nav a.nav-admin:hover{border-color:var(--brand);background:var(--brand-soft)}
 
-/* ===== Hero：居中，logo 方块 → 双行标题 → 副标 → CTA（搜索框已搬进控制条，书10C） ===== */
+/* ===== Hero：居中，双行标题 → 副标 → CTA（书18c：再压一档——首屏底部要露出
+ * 控制条（搜索框+分类）和一截瀑布流当「下方可滚」提示；logo 白卡已删，书18b；
+ * 搜索框已搬进控制条，书10C） ===== */
 .hero{
   display:flex;flex-direction:column;align-items:center;text-align:center;
-  padding:64px 24px 40px;                  /* 底部 40px：搬走搜索框后撑住版面，视觉不许塌 */
+  padding:20px 24px 4px;
   animation:fade-in .6s ease-out backwards;
 }
-.hero-logo{
-  width:128px;height:128px;border-radius:20px;background:#fff;
-  display:flex;align-items:center;justify-content:center;padding:16px;
-  box-shadow:0 0 0 4px rgba(255,255,255,.5),var(--shadow-xl);
-  transition:transform var(--dur) var(--ease),box-shadow var(--dur) var(--ease);
-}
-.hero-logo:hover{transform:translateY(-3px) scale(1.03);box-shadow:0 0 0 4px rgba(255,255,255,.6),0 8px 20px rgba(0,0,0,.18)}
-.hero-logo img{width:96px;height:96px;display:block;object-fit:contain}
 .hero-title{
-  margin:32px 0 0;font-size:60px;line-height:82.5px;font-weight:800;letter-spacing:-1.5px;
+  margin:8px 0 0;font-size:44px;line-height:56px;font-weight:800;letter-spacing:-1.1px;
   color:var(--ink-strong);text-wrap:balance;
 }
 /* 第二行渐变（参考站 from-blue-600 to-teal-500 → 本站收口品牌色系） */
@@ -95,12 +89,12 @@ body{
   color:transparent;letter-spacing:-1.5px;
 }
 .hero-slogan{
-  margin:24px 0 0;max-width:672px;font-size:20px;line-height:28px;color:var(--ink-2);
+  margin:10px 0 0;max-width:672px;font-size:18px;line-height:26px;color:var(--ink-2);
   text-wrap:balance;
 }
-.hero-actions{display:flex;flex-wrap:wrap;justify-content:center;gap:12px;margin:32px 0 0}
+.hero-actions{display:flex;flex-wrap:wrap;justify-content:center;gap:10px;margin:12px 0 0}
 .btn-hero{
-  height:48px;padding:12px 24px;border-radius:999px;
+  height:42px;padding:9px 20px;border-radius:999px;
   border:1px solid var(--line);background:var(--bg);color:var(--ink);
   font-size:16px;font-weight:500;cursor:pointer;
   transition:border-color var(--dur) var(--ease),color var(--dur) var(--ease),
@@ -170,11 +164,11 @@ body{
      （旧 max-width:1680px + margin auto，实测 1920 下 barLeft=120/barW=1680），
      两侧各 120px 空档里下方的卡片直接露出来（截图已复现）。
      故本层不设 max-width —— 用 `.control-bar > *` 的内边距把内容对齐版心。 */
-  display:grid;grid-template-areas:"search" "cats" "count";gap:10px 0;   /* 书10E 反馈1：行间距 10px（+cats padding 10 = 20px） */
+  display:grid;grid-template-areas:"search" "cats" "count";gap:6px 0;   /* 书18c：行距 10→6，首屏要露出控制条+瀑布流一截 */
   /* 书10F 修（用户反馈 2）：底色铺满整个视口宽（不设 max-width），内容用 padding 对齐 1680 版心。
      `(100% - 1680px)/2 + 32px` 在宽视口下算出与 .gallery-wrap 卡片左缘一致的缩进（1920 → 152px），
      窄视口下 max() 兜底 32px。百分比基准是 body 内容宽（已排除滚动条），比 100vw 更准。 */
-  padding:14px max(32px, calc((100% - 1680px) / 2 + 32px)) 0;
+  padding:10px max(32px, calc((100% - 1680px) / 2 + 32px)) 0;   /* 书18c：上内边距 14→10 */
   /* 书10F：**去掉 background-color 过渡**——吸顶是开关语义，渐变只会制造半透明露出窗口；
      只保留 border-bottom-color 的过渡（细线显现更柔和）。 */
   transition:border-bottom-color var(--dur) var(--ease);
@@ -192,7 +186,7 @@ body{
  * 书10C：胶囊收进控制条（与搜索框、计数排序一体吸顶），本条只管胶囊自身排布——
  * sticky/top/z-index/白底/下线全部上交 .control-bar，nav 恢复为普通块。
  * 原 padding:36px 0 8px 的 36px 上边距是「与 Hero 的间距」，进控制条后由控制条内边距统一管。 */
-.category-nav{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;padding:10px 0 2px}
+.category-nav{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;padding:6px 0 0}   /* 书18c：10/2→6/0 */
 .cat-chip{
   display:inline-flex;align-items:center;gap:8px;
   padding:8px 16px;border:1px solid transparent;
@@ -213,7 +207,7 @@ body{
 
 /* 网格头：左「N 个结果」右排序钮。书10C：收进控制条，border-bottom 与 padding 上交控制条
  * （书10D 起常态无边框、无底板，容器完全隐形；hairline 只在吸顶态出现）。 */
-.grid-head{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:6px 0 8px}
+.grid-head{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:4px 0 6px}   /* 书18c：6/8→4/6 */
 .grid-title{margin:0;font-size:15px;font-weight:600;letter-spacing:.04em}
 .result-count{font-size:14px;color:var(--ink-3);font-variant-numeric:tabular-nums}
 .result-count b{color:var(--brand);font-weight:700}
@@ -583,13 +577,11 @@ body.detail-open{overflow:hidden}
   .wrap,.gallery-wrap{padding:0 16px}
   .header-inner{gap:12px;height:auto;padding:12px 0}
   .top-nav{gap:14px}
-  .hero{padding:44px 16px 28px}                /* 底部 28px：搬走搜索框后撑住，不许塌 */
-  .hero-logo{width:96px;height:96px;border-radius:20px;padding:12px}
-  .hero-logo img{width:72px;height:72px}
-  .hero-title{margin-top:20px;font-size:32px;line-height:42px;letter-spacing:-.5px}
+  .hero{padding:24px 16px 4px}                 /* 书18b：logo 卡删、节奏压缩，卡带进首屏 */
+  .hero-title{margin-top:8px;font-size:32px;line-height:42px;letter-spacing:-.5px}
   .hero-title-accent{letter-spacing:-.5px}
-  .hero-slogan{margin-top:14px;font-size:15px;line-height:24px}
-  .hero-actions{margin-top:20px;gap:8px}
+  .hero-slogan{margin-top:10px;font-size:15px;line-height:24px}
+  .hero-actions{margin-top:14px;gap:8px}
   .btn-hero{height:40px;padding:8px 16px;font-size:14px}
   #search-input{max-width:none;height:40px;padding:6px 20px 6px 18px;font-size:14px}   /* 书10D：移动端全宽 40px */
   /* 书10E 控制条移动端两行：行1 = 搜索框 + 排序（等高对齐），行2 = 计数 + 胶囊（**横滑 + 全部固定**）。
@@ -679,3 +671,52 @@ body.detail-open{overflow:hidden}
 .about-qr img{width:128px;height:128px;display:block;margin:0 auto;border-radius:12px;
   border:1px solid rgba(0,94,174,.18);box-shadow:0 4px 14px rgba(0,0,0,.10);background:#fff}
 .about-qr figcaption{margin-top:10px;font-size:13px;font-weight:600;color:var(--ink,#18191C);letter-spacing:.04em}
+
+/* ===== 书18 Hero 弧形卡片轮播 =====
+ * 参考 Reelmark 曲面卡带：全视口宽卡带，12 张提示词卡右→左匀速漂移（无缝循环），
+ * 可拖拽带惯性；曲面几何（圆柱内壁推挤 + clip-path: path() 圆角四边形）由
+ * hero-cards.js 每帧用像素值写入，CSS 只管静态外观。数据不可达时整节 display:none。
+ * 视觉对齐本站冷白调：无投影无描边，卡片圆角由 clip-path 切出（容器不设 radius，
+ * 否则与 path() 双重裁切会在斜边露方角）；frosted 小圆标 + hover 标题条对齐 aiart.pics 压字习惯。 */
+.hero-reels{
+  /* 书18b：hero 底部 padding 已压到 8px，卡带不再负边距上提（-16 会压到 CTA） */
+  margin:0;overflow:hidden;
+  cursor:grab;touch-action:pan-y;               /* 横向手势归卡带，纵向滚动不受影响 */
+  user-select:none;-webkit-user-select:none;
+}
+.hero-reels:active{cursor:grabbing}
+.reel-band{position:relative;height:340px;overflow:hidden}
+.reel-card{
+  position:absolute;left:0;top:0;
+  /* 曲面几何（translate/width/height/clip-path）每帧由 JS 写入，这里只留过渡时间 */
+  will-change:transform;
+}
+/* 入场：只动内层 opacity，不碰 JS 控制的 transform；错峰 delay 由 JS 写 style */
+.reel-inner{
+  position:absolute;inset:0;overflow:hidden;background:var(--bg-hold);
+  animation:reel-in .55s var(--ease) backwards;
+}
+@keyframes reel-in{from{opacity:0}to{opacity:1}}
+.reel-inner img{
+  width:100%;height:100%;object-fit:cover;display:block;
+  opacity:0;transition:opacity var(--dur-img) var(--ease);
+}
+.reel-inner img.is-loaded{opacity:1}
+/* frosted 小圆标（左下角常显）：提示「可点开看详情」，毛玻璃对齐参考站 play 徽标 */
+.reel-icon{
+  position:absolute;left:10px;bottom:10px;width:26px;height:26px;border-radius:999px;
+  display:flex;align-items:center;justify-content:center;color:#fff;
+  background:rgba(17,23,32,.38);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);
+  pointer-events:none;
+}
+/* hover 标题条：左下渐显压字（对齐参考站 hover 压字层），reduced-motion 由全局规则照常生效 */
+.reel-chip{
+  position:absolute;left:10px;right:10px;bottom:10px;padding:8px 12px;border-radius:10px;
+  font-size:13px;line-height:18px;font-weight:600;color:#fff;text-align:left;
+  background:linear-gradient(90deg,rgba(17,23,32,.72),rgba(17,23,32,.28));
+  backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);
+  opacity:0;transition:opacity var(--dur) var(--ease);
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;pointer-events:none;
+}
+.reel-card:hover .reel-chip{opacity:1}
+.reel-card:hover .reel-icon{opacity:0}
