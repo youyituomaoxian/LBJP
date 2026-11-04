@@ -3220,5 +3220,122 @@
     "source": "网络社区收集",
     "createdAt": "2026-01-03T16:06:28Z",
     "updatedAt": "2026-01-03T16:06:28Z"
+  },
+  {
+    "id": "creative-challenge-close-up",
+    "title": "创意挑战：特写",
+    "prompt": "✨ CREATIVE CHALLENGE: CLOSE-UP\n\nI’m excited to see how you explore the close-up theme in your own unique way.\n\nWhether raw, intimate, or cinematic, every detail has something to say.\n\nFeel free to QT or repost your work so others can discover it too.\n\nLet’s connect, and share our creativity ✨",
+    "images": [
+      "data/images/creative-challenge-close-up/creative-challenge-close-up-1067x1600.jpg"
+    ],
+    "categories": [
+      "超真实复刻"
+    ],
+    "tags": [
+      "Cinematic",
+      "Close-Up",
+      "High Detail",
+      "Macro Photography",
+      "Intimate"
+    ],
+    "model": "Gemini Nano Banana Pro",
+    "author": "@马守坤",
+    "source": "网络社区收集",
+    "createdAt": "2026-03-21T18:37:00Z",
+    "updatedAt": "2026-03-21T18:37:00Z"
+  },
+  {
+    "id": "forest-style-outdoor-photography-young-girl",
+    "title": "森系风格少女户外摄影写真",
+    "prompt": "Seedream生成森系风格少女图片\n\n提示词：\n一张具有富士胶卷质感的户外摄影少女写真，风格极简，色调清冷。\n\n画面中的主体是一位18岁的森系少女，特写镜头对准她的面部。\n\n少女置身于草地上的树林间，阳光斑驳地落在她身上。\n\n她棕色的长发搭配着花朵装饰，头发和花完美结合，展现出独特的凌乱美。额头上佩戴着精美的饰品，五官精致立体，嘴角微微上扬，洋溢着青春的气息。\n\n身上穿着一件轻奢风的白纱连衣裙，衬托出她的清新脱俗。",
+    "images": [
+      "data/images/forest-style-outdoor-photography-young-girl/forest-style-outdoor-photography-young-girl-675x1200.jpg"
+    ],
+    "categories": [
+      "超真实复刻"
+    ],
+    "tags": [
+      "Minimalist",
+      "Young Girl",
+      "Cold Tone",
+      "Sunlight Effect",
+      "Outdoor Photography"
+    ],
+    "model": "Gemini Nano Banana Pro",
+    "author": "@马守坤",
+    "source": "网络社区收集",
+    "createdAt": "2026-03-22T10:57:16Z",
+    "updatedAt": "2026-03-22T10:57:16Z"
+  },
+  {
+    "id": "image-to--prompt-tool",
+    "title": "图像转JSON提示词工具",
+    "prompt": "I’ve been using a secret weapon for months: turning images into JSON prompts.\n\nIt helped me create a lot of image content much faster, and since many people kept asking whether I could turn it into a tool, I finally added it to my website.\n\nRight now it supports Gemini / ChatGPT / Claude for image analysis and JSON prompt generation.\n\nOne important note: these models all have NSFW restrictions, so please don’t use NSFW images for analysis, or it may fail.\n\nFrom my testing, images regenerated from these JSON prompts can reach around 70–80% similarity to the original.",
+    "images": [
+      "data/images/image-to--prompt-tool/image-to--prompt-tool-805x1200.jpg",
+      "data/images/image-to--prompt-tool/image-to--prompt-tool-1199x599.jpg",
+      "data/images/image-to--prompt-tool/image-to--prompt-tool-805x1200-2.jpg"
+    ],
+    "categories": [
+      "超真实复刻"
+    ],
+    "tags": [
+      "AI Art",
+      "Content Creation",
+      "Image Analysis",
+      "Image Transformation",
+      "JSON Prompt Generation"
+    ],
+    "model": "Gemini Nano Banana Pro",
+    "author": "@马守坤",
+    "source": "网络社区收集",
+    "createdAt": "2026-04-01T06:36:56Z",
+    "updatedAt": "2026-04-01T06:36:56Z"
+  },
+  {
+    "id": "in-tribute-to-a-legend-walker-texas-ranger",
+    "title": "向传奇致敬：沃克·泰exas·兰德尔",
+    "prompt": "Prompt Share : Walker Texas Ranger \n\nAs a tribute to a legend, today's prompt is dedicated to Chuck Norris \nI'll miss all those Chuck jokes 🥺\nI hope you went there to replace Death \nForever in our hearts\n\nMade with ChatGPT as Grok is dead for me\nPrompt in ALT https://t.co/hG3FzjmCDC",
+    "images": [
+      "data/images/in-tribute-to-a-legend-walker-texas-ranger/in-tribute-to-a-legend-walker-texas-ranger-1024x1536.jpg"
+    ],
+    "categories": [
+      "超真实复刻"
+    ],
+    "tags": [
+      "Action Hero",
+      "Law Enforcement",
+      "Chuck Norris",
+      "Tribute",
+      "Texas"
+    ],
+    "model": "Gemini Nano Banana Pro",
+    "author": "@马守坤",
+    "source": "网络社区收集",
+    "createdAt": "2026-03-21T19:20:10Z",
+    "updatedAt": "2026-03-21T19:20:10Z"
+  },
+  {
+    "id": "seedream-vintage-style-girl-image",
+    "title": "Seedream复古风少女图片",
+    "prompt": "Seedream生成的Ins复古风少女图片。\n\n提示词：\n具有INS风、复古格调的女性人像照片。\n以低像素、高噪点、胶片粗颗粒质感为视觉特点，融入动态美学与朦胧美学，展现出写意的前卫艺术感，细节丰富，是一幅高级感满满的杰作。\n室内环境里，一位超高颜值的美少女留着乌黑的长发，站在冰箱边上，手中拿着一瓶饮料，脸上洋溢着甜美娇羞的表情。\n整体画面呈现出暗色调的柔和朦胧氛围，光影细腻，带有古早味和网感，并且有些模糊，就像用手机随手拍下的快照，有着极其平凡无奇且刻意的平庸感，少女妆容自然，情绪氛围感强烈。",
+    "images": [
+      "data/images/seedream-vintage-style-girl-image/seedream-vintage-style-girl-image-675x1200.jpg"
+    ],
+    "categories": [
+      "超真实复刻"
+    ],
+    "tags": [
+      "Film Grain",
+      "Natural Makeup",
+      "Vintage",
+      "Female Portrait",
+      "Sweet"
+    ],
+    "model": "Gemini Nano Banana Pro",
+    "author": "@马守坤",
+    "source": "网络社区收集",
+    "createdAt": "2026-03-21T14:27:42Z",
+    "updatedAt": "2026-03-21T14:27:42Z"
   }
 ]
