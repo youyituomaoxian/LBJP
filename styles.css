@@ -116,7 +116,8 @@ body{
 .brand{display:flex;align-items:center;gap:10px;text-decoration:none;color:var(--ink);flex:0 0 auto;
   transition:opacity var(--dur) var(--ease)}
 .brand:hover{opacity:.82}
-.brand-mark{width:28px;height:28px;display:block;flex:0 0 auto}
+/* LBJP 徽标视图框 1195×856（内容约 1:1），定高 + 宽自适应，避免被压成带白边方块 */
+.brand-mark{height:26px;width:auto;max-width:120px;display:block;flex:0 0 auto}
 .brand-name{display:flex;flex-direction:column;line-height:1.15;
   font-size:16px;font-weight:600;letter-spacing:.01em}
 .brand-name em{font-style:normal;font-size:11px;font-weight:400;color:var(--ink-2);letter-spacing:.06em}
