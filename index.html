@@ -16,6 +16,7 @@
     </a>
     <nav class="top-nav">
       <a href="#gallery">图库</a>
+      <a href="#feedback">留言板</a>
       <a href="#about">关于</a>
       <a href="admin.html" class="nav-admin">管理员登录</a>
     </nav>
@@ -173,6 +174,66 @@
   </div>
 </section>
 
+<section id="feedback" class="fb-section" aria-label="留言板">
+  <div class="fb-inner">
+    <p class="fb-kicker">FEEDBACK</p>
+    <h2 class="fb-title">留言板 · 说说你的想法</h2>
+    <p class="fb-lead">
+      想看到哪类提示词、哪张图没加载出来、哪个功能不好用——都可以在这里说。
+      <strong>留言对全站公开</strong>，请勿填写邮箱、手机号等私人信息。
+    </p>
+
+    <div class="fb-grid">
+      <form id="fb-form" class="fb-form" autocomplete="off" novalidate>
+        <p class="fb-form-title">写一条留言</p>
+
+        <div class="fb-field-row">
+          <label class="fb-field">
+            <span class="fb-label">称呼（选填）</span>
+            <input id="fb-nickname" type="text" maxlength="20" placeholder="匿名">
+          </label>
+          <label class="fb-field">
+            <span class="fb-label">类型</span>
+            <select id="fb-type">
+              <option value="建议">建议</option>
+              <option value="问题">问题</option>
+              <option value="夸奖">夸奖</option>
+              <option value="其他">其他</option>
+            </select>
+          </label>
+        </div>
+
+        <label class="fb-field">
+          <span class="fb-label">留言内容 *</span>
+          <textarea id="fb-content" rows="5" placeholder="例如：希望能加一个按模型筛选的功能…"></textarea>
+        </label>
+
+        <!-- 蜜罐：真人不可见也填不到；机器人一旦填了，前后端都会直接丢弃 -->
+        <div class="fb-hp" aria-hidden="true">
+          <label>请勿填写<input id="fb-hp" type="text" tabindex="-1" autocomplete="off"></label>
+        </div>
+
+        <div class="fb-form-foot">
+          <span id="fb-count-chars" class="fb-count-chars">0 / 500</span>
+          <button id="fb-submit" type="submit" class="fb-submit">发布留言</button>
+        </div>
+        <p id="fb-msg" class="fb-msg" aria-live="polite"></p>
+        <p id="fb-endpoint-hint" class="fb-hint is-hidden">
+          提示：留言提交通道尚未开通（管理员需部署写入代理），现有留言仍可正常查看。
+        </p>
+      </form>
+
+      <div class="fb-list-wrap">
+        <div class="fb-list-head">
+          <span id="fb-count" class="fb-list-count">…</span>
+          <button id="fb-refresh" type="button" class="fb-refresh">刷新列表</button>
+        </div>
+        <div id="fb-list" class="fb-list" aria-live="polite"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
 <footer class="site-footer">
   <div class="wrap">
     <p class="footer-main">LBJP · 个人提示词库 · 游客只读</p>
@@ -188,7 +249,21 @@
   </svg>
 </button>
 
+<!-- 全站反馈入口：任何页面位置都能一键跳到留言板并聚焦输入框 -->
+<button id="fb-fab" type="button" class="fb-fab" aria-label="我要留言">
+  <svg width="18" height="18" viewBox="0 0 20 20" fill="none" aria-hidden="true">
+    <path d="M17 9.5c0 3.6-3.1 6.5-7 6.5-.9 0-1.8-.15-2.6-.43L4 17l.9-2.6A6.2 6.2 0 0 1 3 9.5C3 5.9 6.1 3 10 3s7 2.9 7 6.5Z"
+      stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/>
+    <circle cx="7.2" cy="9.5" r="1" fill="currentColor"/>
+    <circle cx="10" cy="9.5" r="1" fill="currentColor"/>
+    <circle cx="12.8" cy="9.5" r="1" fill="currentColor"/>
+  </svg>
+  <span>反馈</span>
+</button>
+
 <script src="app.js"></script>
 <script src="hero-cards.js"></script>
+<script src="feedback-config.js"></script>
+<script src="feedback.js"></script>
 </body>
 </html>
