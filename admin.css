@@ -285,3 +285,54 @@
 .import-msg.is-ok{color:#1B7F3B}
 .import-msg.is-warn{color:#8a5b00}
 .import-msg.is-error{color:#C0392B}
+
+/* ---------- 书19 · 留言管理（查 / 删） ---------- */
+.fb-manage-count{display:inline-block;min-width:18px;padding:1px 6px;margin-left:2px;
+  border-radius:999px;background:var(--brand-soft,#EAF3FB);color:var(--brand,#005EAE);
+  font-size:11px;font-weight:700;text-align:center}
+#fb-manage-btn.is-active{border-color:var(--brand,#005EAE);color:var(--brand,#005EAE);
+  background:var(--brand-soft,#EAF3FB)}
+.fb-admin-view{max-width:1100px;margin:0 auto;padding:24px 28px 64px}
+.fb-admin-head{display:flex;align-items:flex-start;justify-content:space-between;gap:20px;margin-bottom:18px}
+.fb-admin-title{margin:0 0 6px;font-size:20px;color:var(--ink-strong)}
+.fb-admin-sub{margin:0;max-width:640px;font-size:12px;line-height:1.8;color:var(--ink-3)}
+.fb-admin-head-actions{display:flex;gap:8px;flex:none}
+.fb-admin-toolbar{display:flex;align-items:center;gap:10px;flex-wrap:wrap;
+  padding:12px;background:var(--bg);border:1px solid var(--line);border-radius:var(--radius);margin-bottom:12px}
+.fb-admin-toolbar input,.fb-admin-toolbar select{font:inherit;font-size:13px;color:var(--ink);
+  background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:8px 10px;height:34px}
+.fb-admin-toolbar input{flex:1;min-width:220px}
+.fb-admin-toolbar input:focus,.fb-admin-toolbar select:focus{outline:none;border-color:var(--brand,#005EAE)}
+.fb-admin-total{margin-left:auto;font-size:12px;font-weight:600;color:var(--ink-3);white-space:nowrap}
+.fb-admin-pickbar{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:10px}
+.fb-admin-pick-count{font-size:12px;color:var(--ink-3);margin-right:auto}
+.fb-admin-msg{margin:0 0 10px;font-size:12px;line-height:1.7;min-height:0}
+.fb-admin-msg:empty{display:none}
+.fb-admin-msg.is-ok{color:#1B7F3B}
+.fb-admin-msg.is-error{color:#C0392B}
+.fb-admin-list{display:flex;flex-direction:column;gap:10px}
+.fb-admin-row{display:flex;align-items:flex-start;gap:12px;padding:12px 14px;
+  background:var(--bg);border:1px solid var(--line);border-radius:10px}
+.fb-admin-row>input[type=checkbox]{flex:none;width:15px;height:15px;margin-top:3px;accent-color:var(--brand,#005EAE)}
+.fb-admin-row-body{flex:1;min-width:0}
+.fb-admin-row-meta{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:6px;
+  font-size:12px;color:var(--ink-3)}
+.fb-admin-row-nick{font-size:13px;font-weight:600;color:var(--ink-strong)}
+.fb-admin-badge{font-size:11px;font-weight:600;padding:2px 9px;border-radius:999px}
+.fb-admin-badge[data-type="建议"]{color:var(--brand,#005EAE);background:var(--brand-soft,#EAF3FB)}
+.fb-admin-badge[data-type="问题"]{color:#B35C00;background:#FFF3E6}
+.fb-admin-badge[data-type="夸奖"]{color:#1B7F3B;background:#E8F6EC}
+.fb-admin-badge[data-type="其他"]{color:#5A6675;background:var(--bg-tag,#F1F5F9)}
+.fb-admin-row-page{max-width:220px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.fb-admin-row-text{margin:0;font-size:13px;line-height:1.8;color:var(--ink);
+  white-space:pre-wrap;word-break:break-word}
+.fb-admin-row-del{flex:none}
+.fb-admin-empty{margin:0;padding:36px 16px;text-align:center;font-size:13px;color:var(--ink-3);
+  background:var(--bg);border:1px dashed var(--line);border-radius:var(--radius)}
+@media (max-width:767px){
+  .fb-admin-view{padding:18px 16px 48px}
+  .fb-admin-head{flex-direction:column;gap:12px}
+  .fb-admin-toolbar input{min-width:100%}
+  .fb-admin-total{margin-left:0}
+}
+
