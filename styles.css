@@ -721,3 +721,109 @@ body.detail-open{overflow:hidden}
 }
 .reel-card:hover .reel-chip{opacity:1}
 .reel-card:hover .reel-icon{opacity:0}
+
+/* ============================================================
+   留言板 · 书19（游客端）
+   数据与交互全部由 feedback.js 自管，样式前缀 .fb- 与既有规则零交集。
+   视觉沿用站点 :root 变量：品牌蓝 #005EAE / 冷白底 / 12px 圆角 / 白卡。
+   ============================================================ */
+.fb-section{border-top:1px solid var(--line);background:var(--bg-page);padding:64px 0 72px;
+  /* 兜底给直接以 #feedback 进站的浏览器：header + 整条吸顶控制条的高度 */
+  scroll-margin-top:170px}
+.fb-inner{max-width:1100px;margin:0 auto;padding:0 32px}
+.fb-kicker{margin:0 0 8px;font-size:11px;font-weight:700;letter-spacing:.18em;color:var(--brand)}
+.fb-title{margin:0 0 12px;font-size:26px;line-height:1.35;letter-spacing:.01em;color:var(--ink-strong)}
+.fb-lead{margin:0 0 28px;max-width:760px;font-size:14px;line-height:1.9;color:var(--ink-2)}
+.fb-lead strong{color:var(--brand);font-weight:700}
+.fb-grid{display:grid;grid-template-columns:400px minmax(0,1fr);gap:28px;align-items:start}
+
+.fb-form{background:var(--bg);border:1px solid var(--line);border-radius:var(--radius);
+  padding:22px;box-shadow:var(--shadow-sm)}
+.fb-form-title{margin:0 0 18px;font-size:15px;font-weight:700;color:var(--ink-strong)}
+.fb-field-row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.fb-field{display:flex;flex-direction:column;gap:6px;margin-bottom:14px}
+.fb-label{font-size:12px;font-weight:600;color:var(--ink-2)}
+.fb-field input,.fb-field select,.fb-field textarea{
+  width:100%;box-sizing:border-box;font:inherit;font-size:14px;color:var(--ink);
+  background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:10px 12px;
+  transition:border-color var(--dur) var(--ease),box-shadow var(--dur) var(--ease)}
+.fb-field textarea{resize:vertical;line-height:1.7;min-height:112px}
+.fb-field input:focus,.fb-field select:focus,.fb-field textarea:focus{
+  outline:none;border-color:var(--brand);box-shadow:0 0 0 3px rgba(0,94,174,.14)}
+.fb-field input::placeholder,.fb-field textarea::placeholder{color:#98A2B3}
+.fb-hp{position:absolute;left:-9999px;width:1px;height:1px;overflow:hidden}
+.fb-form-foot{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-top:4px}
+.fb-count-chars{font-size:11px;color:var(--ink-3)}
+.fb-submit{border:0;border-radius:8px;background:var(--brand);color:#fff;font:inherit;
+  font-size:14px;font-weight:600;padding:10px 22px;cursor:pointer;
+  transition:background var(--dur) var(--ease),transform var(--dur) var(--ease),opacity var(--dur) var(--ease)}
+.fb-submit:hover{background:#004B8C}
+.fb-submit:active{transform:scale(.97)}
+.fb-submit:disabled{opacity:.55;cursor:not-allowed}
+.fb-msg{margin:12px 0 0;font-size:12px;line-height:1.7;min-height:0}
+.fb-msg:empty{display:none}
+.fb-msg.is-ok{color:#1B7F3B}
+.fb-msg.is-error{color:#C0392B}
+.fb-hint{margin:10px 0 0;padding:8px 10px;font-size:12px;line-height:1.7;color:#8a5b00;
+  background:#FFF7E0;border:1px solid #F0D48A;border-radius:8px}
+.fb-hint.is-hidden{display:none}
+
+.fb-list-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:12px}
+.fb-list-count{font-size:13px;font-weight:600;color:var(--ink-2)}
+.fb-refresh{border:1px solid var(--line);background:var(--bg);color:var(--ink-2);
+  border-radius:8px;font:inherit;font-size:12px;padding:6px 12px;cursor:pointer;
+  transition:border-color var(--dur) var(--ease),color var(--dur) var(--ease)}
+.fb-refresh:hover{border-color:var(--brand);color:var(--brand)}
+.fb-list{display:flex;flex-direction:column;gap:12px;max-height:560px;overflow-y:auto;
+  padding-right:6px;scrollbar-width:thin}
+.fb-card{background:var(--bg);border:1px solid var(--line);border-radius:var(--radius);
+  padding:14px 16px;box-shadow:var(--shadow-sm)}
+.fb-card.is-pending{border-color:#F0D48A;background:#FFFDF7}
+.fb-card-head{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:10px}
+.fb-card-who{display:flex;align-items:center;gap:8px;min-width:0}
+.fb-avatar{flex:none;width:26px;height:26px;border-radius:50%;display:flex;align-items:center;
+  justify-content:center;background:var(--brand-soft);color:var(--brand);font-size:12px;font-weight:700}
+.fb-nick{font-size:13px;font-weight:600;color:var(--ink-strong);white-space:nowrap;
+  overflow:hidden;text-overflow:ellipsis}
+.fb-badge{flex:none;font-size:11px;font-weight:600;padding:3px 10px;border-radius:999px}
+.fb-badge[data-type="建议"]{color:var(--brand);background:var(--brand-soft)}
+.fb-badge[data-type="问题"]{color:#B35C00;background:#FFF3E6}
+.fb-badge[data-type="夸奖"]{color:#1B7F3B;background:#E8F6EC}
+.fb-badge[data-type="其他"]{color:#5A6675;background:var(--bg-tag)}
+.fb-card-text{margin:0 0 10px;font-size:14px;line-height:1.8;color:var(--ink);
+  white-space:pre-wrap;word-break:break-word}
+.fb-card-foot{display:flex;align-items:center;gap:12px;flex-wrap:wrap;font-size:11px;color:var(--ink-3)}
+.fb-page{max-width:220px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.fb-sync{color:#B35C00;font-weight:600}
+.fb-empty{margin:0;padding:32px 16px;text-align:center;font-size:13px;color:var(--ink-3);
+  background:var(--bg);border:1px dashed var(--line);border-radius:var(--radius)}
+
+/* 全站反馈悬浮入口：叠在「回到顶部」上方，弹窗打开时一并隐去 */
+.fb-fab{position:fixed;right:28px;bottom:84px;z-index:30;height:40px;padding:0 14px;
+  display:flex;align-items:center;gap:6px;background:var(--brand);color:#fff;
+  border:0;border-radius:999px;box-shadow:var(--shadow-xl);cursor:pointer;
+  font:inherit;font-size:13px;font-weight:600;
+  transition:background var(--dur) var(--ease),transform var(--dur) var(--ease)}
+.fb-fab:hover{background:#004B8C}
+.fb-fab:active{transform:scale(.95)}
+/* 必须排在 .fb-fab{display:flex} 之后：同为单类选择器时，后者会盖掉全局 .is-hidden */
+.fb-fab.is-hidden{display:none}
+body.detail-open .fb-fab{opacity:0;visibility:hidden}
+
+@media (max-width:900px){
+  .fb-grid{grid-template-columns:1fr}
+  .fb-list{max-height:420px}
+}
+@media (max-width:767px){
+  .fb-section{padding:48px 0 56px}
+  .fb-inner{padding:0 20px}
+  .fb-title{font-size:22px}
+  .fb-form{padding:18px}
+  .fb-field-row{grid-template-columns:1fr 1fr;gap:10px}
+  .fb-section{scroll-margin-top:230px}
+  /* 小屏：悬浮入口收成纯图标圆钮，与「回到顶部」同尺寸，不压留言卡片 */
+  .fb-fab{right:16px;bottom:68px;width:40px;height:40px;padding:0;border-radius:50%;
+    justify-content:center}
+  .fb-fab span{display:none}
+}
+
