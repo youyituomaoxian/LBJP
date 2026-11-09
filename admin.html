@@ -56,6 +56,7 @@
       </div>
       <div class="admin-top-actions">
         <span id="admin-status" class="admin-status"></span>
+        <button id="fb-manage-btn" type="button" class="btn-ghost">留言管理 <span id="fb-manage-count" class="fb-manage-count">0</span></button>
         <a class="btn-ghost" href="index.html" target="_blank" rel="noopener" title="在新标签打开游客页">返回游客页</a>
         <button id="pw-open" type="button" class="btn-ghost">修改口令</button>
         <button id="admin-logout" type="button" class="btn-ghost">退出</button>
@@ -179,6 +180,48 @@
       <div id="admin-empty" class="admin-empty">选择左侧条目进行编辑，或点「新增条目」。</div>
     </main>
   </div>
+
+  <!-- 书19 · 留言管理视图：与条目管理互斥切换，独立模块（admin-feedback.js 自管），
+       不碰 admin.js 的任何条目逻辑。删除走 GitHub / 本地双后端，与站点现有写路径同口径。 -->
+  <div id="fb-admin-view" class="fb-admin-view is-hidden">
+    <div class="fb-admin-head">
+      <div>
+        <h2 class="fb-admin-title">留言管理</h2>
+        <p class="fb-admin-sub">全站游客留言。删除会立刻提交到仓库，Git 历史仍可追溯；公开的留言列表约 1 分钟后同步。</p>
+      </div>
+      <div class="fb-admin-head-actions">
+        <button id="fb-admin-back" type="button" class="btn-ghost">← 返回条目管理</button>
+        <button id="fb-admin-refresh" type="button" class="btn-ghost">刷新</button>
+      </div>
+    </div>
+
+    <div class="fb-admin-toolbar">
+      <input id="fb-admin-search" type="search" placeholder="搜索内容 / 称呼 / 来源…" autocomplete="off">
+      <select id="fb-admin-type" aria-label="按类型筛选">
+        <option value="">全部类型</option>
+        <option value="建议">建议</option>
+        <option value="问题">问题</option>
+        <option value="夸奖">夸奖</option>
+        <option value="其他">其他</option>
+      </select>
+      <select id="fb-admin-sort" aria-label="排序">
+        <option value="newest">最新在前</option>
+        <option value="oldest">最早在前</option>
+      </select>
+      <span id="fb-admin-total" class="fb-admin-total">共 0 条</span>
+    </div>
+
+    <div class="fb-admin-pickbar">
+      <button id="fb-admin-pick-all" type="button" class="btn-mini">全选</button>
+      <button id="fb-admin-pick-invert" type="button" class="btn-mini">反选</button>
+      <button id="fb-admin-pick-none" type="button" class="btn-mini">清空</button>
+      <span id="fb-admin-pick-count" class="fb-admin-pick-count">已选 0 条</span>
+      <button id="fb-admin-del-checked" type="button" class="btn-mini is-danger" disabled>删除勾选</button>
+    </div>
+
+    <p id="fb-admin-msg" class="fb-admin-msg" aria-live="polite"></p>
+    <div id="fb-admin-list" class="fb-admin-list"></div>
+  </div>
 </section>
 
 <!-- 修改口令弹窗（账号级操作：顶栏入口进入，不占编辑列空间） -->
@@ -206,5 +249,7 @@
      它的存在本身就是「会被部署覆盖」的根源——哈希是明文常量、随 site/ 一起被推上线。
      管理员凭证唯一 = GitHub 令牌（线上真校验 / 本地不校验）。 -->
 <script src="admin.js"></script>
+<script src="feedback-config.js"></script>
+<script src="admin-feedback.js"></script>
 </body>
 </html>
