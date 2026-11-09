@@ -664,7 +664,7 @@
   }
 
   function ghLogout() {
-    try { sessionStorage.removeItem(GATE_KEY); } catch (e) {}
+    try { sessionStorage.removeItem(GATE_KEY); sessionStorage.removeItem('lbjp_local_token'); } catch (e) {}
     state.token = null; state.entries = [];
     $('admin-app').classList.add('is-hidden');
     $('admin-login').classList.remove('is-hidden');
@@ -2090,6 +2090,9 @@
     setMsg(msg, '');
     api('POST', '/api/login', { password: pw }).then(function (r) {
       state.token = r.token;
+      // 书19：留言管理面板是独立模块，需要复用同一枚会话令牌。
+      // 只进 sessionStorage（与线上 PAT 同一纪律），关标签页即失效。
+      try { sessionStorage.setItem('lbjp_local_token', r.token); } catch (e) {}
       $('admin-pw').value = '';
       return enterApp();
     }).catch(function (e) {
@@ -2215,6 +2218,7 @@
       if (gateMode()) { ghLogout(); return; }   // 线上模式：令牌只存 sessionStorage，退出即清
       api('POST', '/api/logout', {}).catch(function () {}).then(function () {
         state.token = null; state.entries = [];
+        try { sessionStorage.removeItem('lbjp_local_token'); } catch (e) {}
         $('admin-app').classList.add('is-hidden');
         $('admin-login').classList.remove('is-hidden');
       });
