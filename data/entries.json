@@ -3337,5 +3337,27 @@
     "source": "网络社区收集",
     "createdAt": "2026-03-21T14:27:42Z",
     "updatedAt": "2026-03-21T14:27:42Z"
+  },
+  {
+    "id": "p59",
+    "title": "产品摄影，产品商业摄影",
+    "prompt": "Cinematic 3D action-packed advertisement for【 #PRODUCT/BRAND】, captured in an intense mid-motion moment with dramatic studio lighting, dynamic particle effects, and high-impact slow-motion energy. Ultra-hyperrealistic rendering, razor-sharp details, glossy commercial finish, atmospheric depth, and powerful contrast. Viral-ready composition with the brand logo seamlessly integrated into the scene and a sleek, modern slogan positioned cleanly beneath. High-end blockbuster commercial aesthetic",
+    "images": [
+      "data/images/p59/p59-1448x1086.jpg",
+      "data/images/p59/p59-1600x1200.jpg"
+    ],
+    "categories": [
+      "营销海报",
+      "产品图"
+    ],
+    "tags": [
+      "产品",
+      "产品摄影"
+    ],
+    "model": "Nano Banana Pro (Google Gemini)",
+    "author": "@小马",
+    "source": "https://snackprompt.com/e/prompt/premium-cinematic-advertisement-JmFAcGh6n",
+    "createdAt": "2026-11-11T07:02:50Z",
+    "updatedAt": "2026-11-11T07:02:50Z"
   }
 ]
